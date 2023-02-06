@@ -1,0 +1,33 @@
+Data:
+  Amazon Fashion:
+
+    path: .local/data/amazon_review_dataset.csv
+
+    Split:
+      train_size: 0.8
+      test_size: 0.2
+
+Algorithms:
+  RMG: {}
+
+Metrics:
+  MSE: {}
+
+  RMSE: {}
+
+  Precision:
+    k: [ 5, 10, 20 ]
+    threshold: 3.5
+
+  Hits:
+    k: [ 5, 10, 20 ]
+    threshold: 3.5
+
+  Recall:
+    k: [ 5, 10, 20 ]
+    threshold: 3.5
+
+  F1:
+    k: [ 5, 10, 20 ]
+    threshold: 3.5
+
