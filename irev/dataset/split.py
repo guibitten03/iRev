@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+## Separar treino em treino e validação - 0.5 para cada
 
 def user_based_split(df: pd.DataFrame, train_size: float):
     df = df.sort_values(by=[ "user_id", "timestamp" ])
