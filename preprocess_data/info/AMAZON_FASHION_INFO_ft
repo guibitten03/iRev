@@ -1,0 +1,49 @@
+SAVE FOLDER： ../dataset/data/AMAZON_FASHION_data_fasttext
+Warning: the word embedding file is not provided, will be initialized randomly
+2023-11-25 19:32:21: Step1: loading raw review datasets...
+===============Start:all  rawData size======================
+dataNum: 3160
+userNum: 404
+itemNum: 31
+data densiy: 0.2523
+===============End: rawData size========================
+------------------------------------------------------------
+2023-11-25 19:32:21 Step2: split datsets into train/val/test, save into npy data
+===============Start: no-preprocess: trainData size======================
+dataNum: 2528
+userNum: 404
+itemNum: 30
+===============End: no-preprocess: trainData size========================
+===============Start--process finished: trainData size======================
+dataNum: 2529
+userNum (config): 404
+itemNum (config): 31
+===============End-process finished: trainData size========================
+2023-11-25 19:32:21
+Train data size (config): 2529
+Val data size (config): 316
+Test data size (config): 315
+------------------------------------------------------------
+2023-11-25 19:32:21 Step3: Construct the vocab and user/item reviews from training set.
+The vocab size: 1451
+Average user document length: 130.20049504950495
+Average item document length: 196.80645161290323
+2023-11-25 19:32:21
+u_max_r:7
+i_max_r:295
+r_max_len：42
+------------------------------------------------------------
+2023-11-25 19:32:21 Step4: padding all the text and id lists and save into npy.
+user document length: 500
+item document length: 500
+------------------------------------------------------------
+2023-11-25 19:32:21 start writing npy...
+2023-11-25 19:32:21 write finised
+------------------------------------------------------------
+2023-11-25 19:32:21 Step5: start word embedding mapping...
+############################
+out of vocab: 38
+w2v size: 1451
+############################
+Vocab Size and Word Dim: (1451, 300)
+2023-11-25 19:33:42 all steps finised, cost time: 81.5773s

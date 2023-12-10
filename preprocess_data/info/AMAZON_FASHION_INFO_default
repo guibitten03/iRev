@@ -1,0 +1,50 @@
+SAVE FOLDER： ../dataset/data/AMAZON_FASHION_data_default
+Warning: the word embedding file is not provided, will be initialized randomly
+2023-11-29 19:53:52: Step1: loading raw review datasets...
+===============Start:all  rawData size======================
+dataNum: 3160
+userNum: 404
+itemNum: 31
+data densiy: 0.2523
+===============End: rawData size========================
+------------------------------------------------------------
+2023-11-29 19:53:52 Step2: split datsets into train/val/test, save into npy data
+===============Start: no-preprocess: trainData size======================
+dataNum: 2528
+userNum: 404
+itemNum: 30
+===============End: no-preprocess: trainData size========================
+===============Start--process finished: trainData size======================
+dataNum: 2529
+userNum (config): 404
+itemNum (config): 31
+===============End-process finished: trainData size========================
+2023-11-29 19:53:52
+Train data size (config): 2529
+Val data size (config): 316
+Test data size (config): 315
+------------------------------------------------------------
+2023-11-29 19:53:52 Step3: Construct the vocab and user/item reviews from training set.
+LDA transform matrix: (435, 32)
+The vocab size: 1451
+Average user document length: 130.20049504950495
+Average item document length: 196.80645161290323
+2023-11-29 19:53:53
+u_max_r:7
+i_max_r:295
+r_max_len：42
+------------------------------------------------------------
+2023-11-29 19:53:53 Step4: padding all the text and id lists and save into npy.
+user document length: 500
+item document length: 500
+------------------------------------------------------------
+2023-11-29 19:53:53 start writing npy...
+2023-11-29 19:53:53 write finised
+------------------------------------------------------------
+2023-11-29 19:53:53 Step5: start word embedding mapping...
+############################
+out of vocab: 1451
+w2v size: 1451
+############################
+Vocab Size and Word Dim: (1451, 300)
+2023-11-29 19:53:53 all steps finised, cost time: 0.4377s

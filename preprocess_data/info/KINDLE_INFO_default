@@ -1,0 +1,50 @@
+SAVE FOLDER： ../dataset/.data/Kindle_Store_data_default
+Warning: the word embedding file is not provided, will be initialized randomly
+2023-12-06 13:47:17: Step1: loading raw review datasets...
+===============Start:all  rawData size======================
+dataNum: 2222580
+userNum: 139816
+itemNum: 98824
+data densiy: 0.0002
+===============End: rawData size========================
+------------------------------------------------------------
+2023-12-06 13:47:27 Step2: split datsets into train/val/test, save into npy data
+===============Start: no-preprocess: trainData size======================
+dataNum: 1778064
+userNum: 139811
+itemNum: 98819
+===============End: no-preprocess: trainData size========================
+===============Start--process finished: trainData size======================
+dataNum: 1778107
+userNum (config): 139816
+itemNum (config): 98824
+===============End-process finished: trainData size========================
+2023-12-06 13:48:35
+Train data size (config): 1778107
+Val data size (config): 222237
+Test data size (config): 222236
+------------------------------------------------------------
+2023-12-06 13:48:35 Step3: Construct the vocab and user/item reviews from training set.
+LDA transform matrix: (238640, 32)
+The vocab size: 50002
+Average user document length: 255.2429407220919
+Average item document length: 381.22778879624383
+2023-12-06 14:10:29
+u_max_r:17
+i_max_r:30
+r_max_len：116
+------------------------------------------------------------
+2023-12-06 14:10:35 Step4: padding all the text and id lists and save into npy.
+user document length: 500
+item document length: 500
+------------------------------------------------------------
+2023-12-06 14:11:19 start writing npy...
+2023-12-06 14:11:40 write finised
+------------------------------------------------------------
+2023-12-06 14:11:40 Step5: start word embedding mapping...
+############################
+out of vocab: 50002
+w2v size: 50002
+############################
+Vocab Size and Word Dim: (50002, 300)
+2023-12-06 14:11:41 all steps finised, cost time: 1464.1466s
