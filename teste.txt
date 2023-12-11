@@ -1,0 +1,281 @@
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+load model: checkpoints/DeepCoNN_Industrial_and_Scientific_data_word2vec.pth
+loading test data
+2023-12-11 16:12:34: test in the test dataset
+MSE mean: 0.84,
+                MAE mean: 0.65, 
+                RMSE mean: 0.91, 
+                NDCG mean: nan, 
+                PRECISION mean: 0.42,
+                RECALL mean: 0.26
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+load model: checkpoints/NARRE_Industrial_and_Scientific_data_word2vec.pth
+loading test data
+2023-12-11 16:12:36: test in the test dataset
+MSE mean: 0.79,
+                MAE mean: 0.58, 
+                RMSE mean: 0.89, 
+                NDCG mean: nan, 
+                PRECISION mean: 0.40,
+                RECALL mean: 0.29
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+load model: checkpoints/MPCN_Industrial_and_Scientific_data_word2vec.pth
+loading test data
+2023-12-11 16:12:38: test in the test dataset
+MSE mean: 0.88,
+                MAE mean: 0.67, 
+                RMSE mean: 0.93, 
+                NDCG mean: nan, 
+                PRECISION mean: 0.53,
+                RECALL mean: 0.26
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+load model: checkpoints/D_ATTN_Industrial_and_Scientific_data_word2vec.pth
+loading test data
+2023-12-11 16:12:41: test in the test dataset
+MSE mean: 0.84,
+                MAE mean: 0.63, 
+                RMSE mean: 0.91, 
+                NDCG mean: nan, 
+                PRECISION mean: 0.40,
+                RECALL mean: 0.26
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+load model: checkpoints/DAML_Industrial_and_Scientific_data_word2vec.pth
+loading test data
+2023-12-11 16:12:44: test in the test dataset
+MSE mean: 0.86,
+                MAE mean: 0.63, 
+                RMSE mean: 0.83, 
+                NDCG mean: nan, 
+                PRECISION mean: 0.54,
+                RECALL mean: 0.48
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+Step 0, 14757222.000
+Step 50, 148969.969
+Step 100, 114458.219
+Step 150, 113985.977
+Step 200, 113177.492
+Step 250, 111677.188
+Step 300, 110771.383
+Step 350, 109683.336
+Step 400, 108788.289
+Step 450, 108201.758
+Step 500, 107836.234
+Step 550, 107548.977
+Step 600, 107263.812
+Step 650, 106974.695
+Step 700, 106706.828
+Step 750, 106469.375
+Step 800, 106250.961
+Step 850, 106038.531
+Step 900, 105822.500
+Step 950, 105595.836
+load model: checkpoints/ConvMF_Industrial_and_Scientific_data_word2vec.pth
+loading test data
+2023-12-11 16:17:45: test in the test dataset
+MSE mean: 0.88,
+                MAE mean: 0.67, 
+                RMSE mean: 0.93, 
+                NDCG mean: nan, 
+                PRECISION mean: 0.51,
+                RECALL mean: 0.24
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+load model: checkpoints/ANR_Industrial_and_Scientific_data_word2vec.pth
+loading test data
+2023-12-11 16:17:47: test in the test dataset
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+load model: checkpoints/TAERT_Industrial_and_Scientific_data_word2vec.pth
+loading test data
+2023-12-11 16:17:49: test in the test dataset
+MSE mean: 1.66,
+                MAE mean: 1.20, 
+                RMSE mean: 1.29, 
+                NDCG mean: nan, 
+                PRECISION mean: 0.12,
+                RECALL mean: 0.22
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+load model: checkpoints/ALFM_Industrial_and_Scientific_data_word2vec.pth
+loading test data
+2023-12-11 16:17:52: test in the test dataset
+MSE mean: 0.95,
+                MAE mean: 0.74, 
+                RMSE mean: 0.97, 
+                NDCG mean: nan, 
+                PRECISION mean: 0.16,
+                RECALL mean: 0.20
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+load model: checkpoints/A3NCF_Industrial_and_Scientific_data_word2vec.pth
+loading test data
+2023-12-11 16:17:54: test in the test dataset
+MSE mean: 0.85,
+                MAE mean: 0.64, 
+                RMSE mean: 0.92, 
+                NDCG mean: nan, 
+                PRECISION mean: 0.55,
+                RECALL mean: 0.27
+load npy from dist...
+*************************************************
+user config:
+setting_path => .data/Industrial_and_Scientific_data_word2vec
+vocab_size => 35956
+r_max_len => 62
+u_max_r => 7
+i_max_r => 17
+train_data_size => 61659
+test_data_size => 7701
+val_data_size => 7700
+user_num => 11043
+item_num => 5336
+*************************************************
+load model: checkpoints/CARP_Industrial_and_Scientific_data_word2vec.pth
+loading test data
+2023-12-11 16:17:56: test in the test dataset
+MSE mean: 0.95,
+                MAE mean: 0.72, 
+                RMSE mean: 0.97, 
+                NDCG mean: nan, 
+                PRECISION mean: 0.72,
+                RECALL mean: 0.20

@@ -104,7 +104,8 @@ class DefaultConfig:
                 raise Exception('opt has No key: {}'.format(k))
             setattr(self, k, v)
 
-        self.set_path(self.setting_path + self.emb_opt)
+        self.setting_path = self.setting_path + self.emb_opt
+        self.set_path(self.setting_path)
 
         # LOAD DATASET FEATURES
         print("load npy from dist...")
@@ -166,3 +167,81 @@ class Toys_and_Games_data_Config(DefaultConfig):
 
     user_num = 208143 + 2
     item_num = 78772 + 2
+
+class Digital_Music_data_Config(DefaultConfig):
+    
+    # DATASET FEATURES CONFIG
+    setting_path = '.data/Digital_Music_data_'
+        
+    vocab_size = 50002
+    
+    r_max_len = 34
+
+    u_max_r = 12
+    i_max_r = 18
+
+    train_data_size = 135740
+    test_data_size = 16942
+    val_data_size = 16941
+
+    user_num = 16561 + 2
+    item_num = 11797 + 2
+
+
+class Video_Games_data_Config(DefaultConfig):
+    
+    # DATASET FEATURES CONFIG
+    setting_path = '.data/Video_Games_data_'
+        
+    vocab_size = 50002
+    
+    r_max_len = 172
+
+    u_max_r = 10
+    i_max_r = 35
+
+    train_data_size = 397985
+    test_data_size = 49717
+    val_data_size = 49717
+
+    user_num = 55217 + 2
+    item_num = 17408 + 2
+
+
+class Industrial_and_Scientific_data_Config(DefaultConfig):
+    
+    # DATASET FEATURES CONFIG
+    setting_path = '.data/Industrial_and_Scientific_data_'
+        
+    vocab_size = 35956
+    
+    r_max_len = 62
+
+    u_max_r = 7
+    i_max_r = 17
+
+    train_data_size = 61659
+    test_data_size = 7701
+    val_data_size = 7700
+
+    user_num = 11041 + 2
+    item_num = 5334 + 2
+
+class Musical_Instruments_data_Config(DefaultConfig):
+    
+    # DATASET FEATURES CONFIG
+    setting_path = '.data/Musical_Instruments_data_'
+        
+    vocab_size = 50002
+    
+    r_max_len = 75
+
+    u_max_r = 9
+    i_max_r = 24
+
+    train_data_size = 185121
+    test_data_size = 23112
+    val_data_size = 23111
+
+    user_num = 27528 + 2
+    item_num = 10620 + 2
