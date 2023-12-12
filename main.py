@@ -262,9 +262,9 @@ def predict(model, data_loader, opt):
 
                 grownd_truth = [y[1] for y in [x for x in iteractions if user == x[0]]]
 
-                ndcg = ndcg_metric(grownd_truth, list_wise, nranks=4)
+                # ndcg = ndcg_metric(grownd_truth, list_wise, nranks=4)
 
-                ndcg_values.append(ndcg)
+                # ndcg_values.append(ndcg)
 
 
     
@@ -280,8 +280,7 @@ def predict(model, data_loader, opt):
     else:
         print(f'''MSE mean: {np.array(mse_values).mean():.2f},
                 MAE mean: {np.array(mae_values).mean():.2f}, 
-                RMSE mean: {np.array(rmse_values).mean():.2f}, 
-                NDCG mean: {np.array(ndcg_values).mean():.2f}, 
+                RMSE mean: {np.array(rmse_values).mean():.2f},  
                 PRECISION mean: {np.array(precision_values).mean():.2f},
                 RECALL mean: {np.array(recall_values).mean():.2f}'''
                 
