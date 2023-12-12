@@ -21,8 +21,7 @@ class TRANSNET(nn.Module):
     def forward(self, datas):
         user_reviews, item_reviews, uids, iids, user2item, item2user, _, _ = datas
 
-        item_reviews = item_reviews[:, :user_reviews.shape[1], :]
-        item2user = item2user[user2item.shape[1]]
+        # item_reviews = item_reviews[:, :user_reviews.shape[1], :]
 
         source_latent, source_prediction = self.source_net(
             user_reviews, item_reviews, uids, iids
@@ -30,7 +29,7 @@ class TRANSNET(nn.Module):
 
         # Get review of user i for item j in batch
         reviews = []
-        for i in range(len(uids)):
+        for i, u in enumerate(uids):
             itens_of_user = user2item[i]
             item_of_batch = iids[i]
 
@@ -72,13 +71,12 @@ class CNN(nn.Module):
         self.opt = opt
 
         self.conv = nn.Sequential(
-            nn.Conv1d(
-                in_channels=opt.word_dim,
+            nn.Conv2d(
+                in_channels=1,        # item2user = item2user[user2item.shape[1]]
                 out_channels=opt.filters_num,
-                kernel_size=opt.kernel_size,
+                kernel_size=(opt.kernel_size, opt.word_dim),
                 padding=(opt.kernel_size - 1) // 2),  # out shape(new_batch_size, kernel_count, review_length)
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=(1, opt.r_max_len)),  # out shape(new_batch_size,kernel_count,1)
+            nn.ReLU(),  # out shape(new_batch_size,kernel_count,1)
         )
 
         self.linear = nn.Sequential(
@@ -87,7 +85,7 @@ class CNN(nn.Module):
         )
 
     def forward(self, vec):  # input shape(new_batch_size, review_length, word2vec_dim)
-        latent = self.conv(vec.permute(0, 2, 1))  # output shape(new_batch_size, kernel_count, 1)
+        latent = self.conv(vec)  # output shape(new_batch_size, kernel_count, 1)
         latent = latent.view(-1, self.opt.filters_num * 1)
         latent = self.linear(latent)
         return latent  # output shape(batch_size, id_emb_size)
@@ -124,19 +122,30 @@ class SourceNet(nn.Module):
     def forward(self, user_reviews, item_reviews, user_ids, item_ids):  # shape(batch_size, review_count, review_length)
         older_bs = user_reviews.shape[0]
 
-        new_batch_size = user_reviews.shape[0] * user_reviews.shape[1]
-        user_reviews = user_reviews.reshape(new_batch_size, -1)
-        item_reviews = item_reviews.reshape(new_batch_size, -1)
-
         u_vec = self.user_emb(user_reviews)
         i_vec = self.item_emb(item_reviews)
 
-        user_latent = self.cnn_u(u_vec)
-        item_latent = self.cnn_i(i_vec)
+        u_shape, u_r_num, u_r_len, wd = u_vec.size()
+        i_shape, i_r_num, i_r_len, wd = i_vec.size()
+
+        u_vec = u_vec.view(-1, u_r_len, wd)
+        i_vec = i_vec.view(-1, i_r_len, wd)
+
+        user_latent = self.cnn_u(u_vec.unsqueeze(1)).squeeze(3)
+        user_latent = F.max_pool1d(user_latent, user_latent.size(2)).squeeze(2)
+
+        item_latent = self.cnn_i(i_vec.unsqueeze(1)).squeeze(3)
+        item_latent = F.max_pool1d(item_latent, item_latent.size(2)).squeeze(2)
+
+        user_latent = user_latent.view(-1, u_r_num, user_latent.size(1))
+        item_latent = item_latent.view(-1, i_r_num, item_latent.size(1))
+
+        print(user_latent.shape)
+        print(item_latent.shape)
 
         user_latent = user_latent.reshape(older_bs, self.opt.u_max_r, self.opt.id_emb_size)\
                         .reshape(older_bs, -1)
-        item_latent = item_latent.reshape(older_bs, self.opt.u_max_r, self.opt.id_emb_size)\
+        item_latent = item_latent.reshape(older_bs, self.opt.i_max_r, self.opt.id_emb_size)\
                         .reshape(older_bs, -1)
         concat_latent = torch.cat((user_latent, item_latent), dim=1)
         trans_latent = self.transform(concat_latent)

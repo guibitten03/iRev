@@ -1,0 +1,50 @@
+SAVE FOLDER： ../dataset/.data/Prime_Pantry_data_word2vec
+Warning: the word embedding file is not provided, will be initialized randomly
+2023-12-12 16:29:03: Step1: loading raw review datasets...
+===============Start:all  rawData size======================
+dataNum: 137611
+userNum: 14175
+itemNum: 4970
+data densiy: 0.0020
+===============End: rawData size========================
+------------------------------------------------------------
+2023-12-12 16:29:04 Step2: split datsets into train/val/test, save into npy data
+===============Start: no-preprocess: trainData size======================
+dataNum: 110088
+userNum: 14173
+itemNum: 4970
+===============End: no-preprocess: trainData size========================
+===============Start--process finished: trainData size======================
+dataNum: 110090
+userNum (config): 14175
+itemNum (config): 4970
+===============End-process finished: trainData size========================
+2023-12-12 16:29:04
+Train data size (config): 110090
+Val data size (config): 13761
+Test data size (config): 13760
+------------------------------------------------------------
+2023-12-12 16:29:04 Step3: Construct the vocab and user/item reviews from training set.
+LDA transform matrix: (19145, 32)
+The vocab size: 26453
+Average user document length: 117.46723104056437
+Average item document length: 247.98108651911468
+2023-12-12 16:29:38
+u_max_r:11
+i_max_r:36
+r_max_len：35
+------------------------------------------------------------
+2023-12-12 16:29:38 Step4: padding all the text and id lists and save into npy.
+user document length: 500
+item document length: 500
+------------------------------------------------------------
+2023-12-12 16:29:40 start writing npy...
+2023-12-12 16:29:41 write finised
+------------------------------------------------------------
+2023-12-12 16:29:41 Step5: start word embedding mapping...
+############################
+out of vocab: 5342
+w2v size: 26453
+############################
+Vocab Size and Word Dim: (26453, 300)
+2023-12-12 16:29:53 all steps finised, cost time: 50.1552s

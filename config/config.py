@@ -245,3 +245,23 @@ class Musical_Instruments_data_Config(DefaultConfig):
 
     user_num = 27528 + 2
     item_num = 10620 + 2
+
+
+class Prime_Pantry_data_Config(DefaultConfig):
+    
+    # DATASET FEATURES CONFIG
+    setting_path = '.data/Prime_Pantry_data_'
+        
+    vocab_size = 26453
+    
+    r_max_len = 35
+
+    u_max_r =11
+    i_max_r = 36
+
+    train_data_size = 110090
+    test_data_size = 13761
+    val_data_size = 13760
+
+    user_num = 14175 + 2
+    item_num = 4970 + 2
