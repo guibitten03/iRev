@@ -230,7 +230,7 @@ def predict(model, data_loader, opt):
             mae_loss = torch.mean(abs(output-scores))
             total_maeloss += mae_loss.item()
 
-            rmse, ndcg, precision, recall = calculate_metrics(scores, output)
+            rmse, precision, recall = calculate_metrics(scores, output)
 
             mse_values.append(mse_loss.cpu().item())
             rmse_values.append(rmse.item())
