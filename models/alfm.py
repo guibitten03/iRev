@@ -43,7 +43,7 @@ class ALFM(nn.Module):
 
 
     def forward(self, datas):
-        user_reviews, item_reviews, uids, iids, user_item2id, item_user2id, user_doc, item_doc = datas
+        _, _, uids, iids, _, _, user_doc, item_doc = datas
 
 		########################## INPUT #########################
         user_id_embed = self.user_embedding(uids)

@@ -5,6 +5,10 @@ import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
 
+import pandas as pd
+
+from .pmf import ProbabilisticMatrixFatorization
+
 
 class TARMF(nn.Module):
     '''
@@ -13,7 +17,7 @@ class TARMF(nn.Module):
     def __init__(self, opt):
         super(TARMF, self).__init__()
 
-        self.num_fea = 1
+        self.num_fea = 2
         self.opt = opt
 
         self.user_embeddings = nn.Embedding(opt.vocab_size, opt.word_dim)
@@ -40,6 +44,11 @@ class TARMF(nn.Module):
                             nn.Linear(2, opt.id_emb_size),
                             nn.Tanh()
         )
+
+        train = pd.read_csv(f"dataset/.data/{self.opt.dataset}_{self.opt.emb_opt}/train/Train.csv")
+        self.fit_pmf(train)
+
+        self.reset_para()
 
     
     def forward(self, datas):
@@ -71,5 +80,27 @@ class TARMF(nn.Module):
         user_fea = self.user_proj(user_fea)
         item_fea = self.item_proj(item_fea)
 
+        self.pmf_model.user_features = self.pmf_model.user_features.to('cuda')
+        self.pmf_model.item_features = self.pmf_model.item_features.to('cuda')
+        u_r_fea = self.pmf_model.user_features[uids]
+        i_r_fea = self.pmf_model.item_features[iids]
+
+        user_fea = torch.cat([user_fea, u_r_fea], dim=1)
+        item_fea = torch.cat([item_fea, i_r_fea], dim=1)
 
         return user_fea, item_fea
+    
+
+    def reset_para(self):
+        for x in [self.user_topic_att,
+                  self.item_topic_att,
+                  self.user_proj,
+                  self.item_proj]:
+            nn.init.uniform_(x[0].weight, -0.1, 0.1)
+            nn.init.constant_(x[0].bias, 0.1)
+
+
+    def fit_pmf(self, dataset):
+
+        self.pmf_model = ProbabilisticMatrixFatorization(dataset)
+        self.pmf_model.fit()

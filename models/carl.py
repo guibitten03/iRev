@@ -37,6 +37,7 @@ class CARL(nn.Module):
         uids_emb = self.u_emb(uids)
         iids_emb = self.i_emb(iids)
 
+        # --- Review Based Feature Learning --- #
         user_fea = F.relu(self.user_cnn(user_fea.unsqueeze(1)).squeeze(3))
         item_fea = F.relu(self.item_cnn(item_fea.unsqueeze(1)).squeeze(3))
 
@@ -53,6 +54,7 @@ class CARL(nn.Module):
 
         user_fea = self.abstract_user_cnn(user_fea.unsqueeze(3)).squeeze(3)
         item_fea = self.abstract_item_cnn(item_fea.unsqueeze(3)).squeeze(3)
+
 
         user_fea = self.shared_mlp(user_fea).squeeze(1)
         item_fea = self.shared_mlp(item_fea).squeeze(1)

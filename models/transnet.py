@@ -24,7 +24,7 @@ class TRANSNET(nn.Module):
         # item_reviews = item_reviews[:, :user_reviews.shape[1], :]
 
         source_latent, source_prediction = self.source_net(
-            user_reviews, item_reviews, uids, iids
+            user_reviews, item_reviews
         )
 
         # Get review of user i for item j in batch
@@ -65,7 +65,7 @@ class TRANSNET(nn.Module):
 
 class CNN(nn.Module):
 
-    def __init__(self, opt, uori_len):
+    def __init__(self, opt):
         super(CNN, self).__init__()
 
         self.opt = opt
@@ -75,7 +75,8 @@ class CNN(nn.Module):
                 in_channels=1,        # item2user = item2user[user2item.shape[1]]
                 out_channels=opt.filters_num,
                 kernel_size=(opt.kernel_size, opt.word_dim),
-                padding=(opt.kernel_size - 1) // 2),  # out shape(new_batch_size, kernel_count, review_length)
+                # padding=(opt.kernel_size - 1) // 2
+                ),  # out shape(new_batch_size, kernel_count, review_length)
             nn.ReLU(),  # out shape(new_batch_size,kernel_count,1)
         )
 
@@ -85,8 +86,12 @@ class CNN(nn.Module):
         )
 
     def forward(self, vec):  # input shape(new_batch_size, review_length, word2vec_dim)
-        latent = self.conv(vec)  # output shape(new_batch_size, kernel_count, 1)
-        latent = latent.view(-1, self.opt.filters_num * 1)
+        bs, r_num, r_len, wd = vec.size()
+        vec = vec.view(-1, r_len, wd)
+
+        latent = self.conv(vec.unsqueeze(1)).squeeze(3)  # output shape(new_batch_size, kernel_count, 1)
+        latent = F.max_pool1d(latent, latent.size(2)).squeeze(2)
+        latent = latent.view(-1, r_num, latent.size(1))
         latent = self.linear(latent)
         return latent  # output shape(batch_size, id_emb_size)
     
@@ -101,58 +106,50 @@ class SourceNet(nn.Module):
         self.extend_model = extend_model
         self.user_emb = nn.Embedding(opt.vocab_size, opt.word_dim)
         self.item_emb = nn.Embedding(opt.vocab_size, opt.word_dim)
-        self.cnn_u = CNN(opt, opt.u_max_r)
-        self.cnn_i = CNN(opt, opt.i_max_r)
-        self.transform = nn.Sequential(
-            nn.Linear(opt.id_emb_size * opt.u_max_r * 2, opt.id_emb_size),
+        self.cnn_u = CNN(opt)
+        self.cnn_i = CNN(opt)
+        self.z0_transform = nn.Sequential(
+            nn.Linear(opt.u_max_r + opt.i_max_r, 1),
             nn.Tanh(),
+        )
+
+        self.z1_transform = nn.Sequential(
             nn.Linear(opt.id_emb_size, opt.id_emb_size),
             nn.Tanh(),
             nn.Dropout(opt.drop_out)
         )
 
-        for m in self.transform.modules():
+        self.reset_param()
+        
+        self.fm = FactorizationMachine(in_dim=opt.id_emb_size, k=8)
+
+    def forward(self, user_reviews, item_reviews):  # shape(batch_size, review_count, review_length)
+        u_vec = self.user_emb(user_reviews)
+        i_vec = self.item_emb(item_reviews)
+
+        user_latent = self.cnn_u(u_vec)
+
+        item_latent = self.cnn_i(i_vec)
+
+        latent = torch.cat((user_latent, item_latent), dim=1).permute(0, 2, 1)
+
+        latent = self.z0_transform(latent).squeeze(2)
+        latent = self.z1_transform(latent)
+
+        prediction = self.fm(latent.detach())  # Detach forward
+
+        return latent, prediction
+
+    def reset_param(self):
+        for m in self.z0_transform.modules():
             if isinstance(m, nn.Linear):
                 m.weight.data.normal_(mean=0, std=0.1).clamp_(-1, 1)
                 nn.init.constant_(m.bias.data, 0.1)
 
-        
-        self.fm = FactorizationMachine(in_dim=opt.id_emb_size, k=8)
-
-    def forward(self, user_reviews, item_reviews, user_ids, item_ids):  # shape(batch_size, review_count, review_length)
-        older_bs = user_reviews.shape[0]
-
-        u_vec = self.user_emb(user_reviews)
-        i_vec = self.item_emb(item_reviews)
-
-        u_shape, u_r_num, u_r_len, wd = u_vec.size()
-        i_shape, i_r_num, i_r_len, wd = i_vec.size()
-
-        u_vec = u_vec.view(-1, u_r_len, wd)
-        i_vec = i_vec.view(-1, i_r_len, wd)
-
-        user_latent = self.cnn_u(u_vec.unsqueeze(1)).squeeze(3)
-        user_latent = F.max_pool1d(user_latent, user_latent.size(2)).squeeze(2)
-
-        item_latent = self.cnn_i(i_vec.unsqueeze(1)).squeeze(3)
-        item_latent = F.max_pool1d(item_latent, item_latent.size(2)).squeeze(2)
-
-        user_latent = user_latent.view(-1, u_r_num, user_latent.size(1))
-        item_latent = item_latent.view(-1, i_r_num, item_latent.size(1))
-
-        print(user_latent.shape)
-        print(item_latent.shape)
-
-        user_latent = user_latent.reshape(older_bs, self.opt.u_max_r, self.opt.id_emb_size)\
-                        .reshape(older_bs, -1)
-        item_latent = item_latent.reshape(older_bs, self.opt.i_max_r, self.opt.id_emb_size)\
-                        .reshape(older_bs, -1)
-        concat_latent = torch.cat((user_latent, item_latent), dim=1)
-        trans_latent = self.transform(concat_latent)
-
-        prediction = self.fm(trans_latent.detach())  # Detach forward
-
-        return trans_latent, prediction
+        for m in self.z1_transform.modules():
+            if isinstance(m, nn.Linear):
+                m.weight.data.normal_(mean=0, std=0.1).clamp_(-1, 1)
+                nn.init.constant_(m.bias.data, 0.1)
 
     def trans_param(self):
         return [x for x in self.cnn_u.parameters()] + \
@@ -167,7 +164,12 @@ class TargetNet(nn.Module):
         super(TargetNet, self).__init__()
         self.embedding = nn.Embedding(opt.vocab_size, opt.word_dim)
 
-        self.conv = CNN(opt, opt.r_max_len)
+        self.conv = nn.Sequential(
+            nn.Conv2d(1, opt.filters_num, kernel_size=(opt.kernel_size, opt.word_dim)),
+            nn.ReLU()
+        )
+
+        self.fc = nn.Linear(opt.filters_num, opt.id_emb_size)
 
         self.fm = nn.Sequential(
             nn.Dropout(opt.drop_out),  # Since cnn did not dropout, dropout before FM.
@@ -176,9 +178,11 @@ class TargetNet(nn.Module):
 
     def forward(self, reviews):  # input shape(batch_size, review_length)
         vec = self.embedding(reviews)
-        cnn_latent = self.conv(vec)
-        prediction = self.fm(cnn_latent)
-        return cnn_latent, prediction
+        latent = self.conv(vec.unsqueeze(1)).squeeze(3)
+        latent = F.max_pool1d(latent, latent.size(2)).squeeze(2)
+        latent = self.fc(latent)
+        prediction = self.fm(latent)
+        return latent, prediction
     
 
 class FactorizationMachine(nn.Module):

@@ -5,6 +5,8 @@ import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
 
+import math
+
 
 class CARP(nn.Module):
     
@@ -16,13 +18,13 @@ class CARP(nn.Module):
         self.user_word_embs = nn.Embedding(opt.vocab_size, opt.word_dim)  # vocab_size * 300
         self.item_word_embs = nn.Embedding(opt.vocab_size, opt.word_dim)  # vocab_size * 300
 
-        self.user_cnn = nn.Conv2d(1, opt.filters_num, (opt.kernel_size, opt.word_dim))
-        self.item_cnn = nn.Conv2d(1, opt.filters_num, (opt.kernel_size, opt.word_dim))
+        self.id_user_emb = nn.Embedding(opt.user_num, opt.id_emb_size)
+        self.id_item_emb = nn.Embedding(opt.item_num, opt.id_emb_size)
 
-        self.user_selfattn = nn.MultiheadAttention(opt.filters_num, 10)
-        self.item_selfattn = nn.MultiheadAttention(opt.filters_num, 10)
+        self.user_viewpoint = ViewPoint(opt)
+        self.item_viewpoint = ViewPoint(opt)
 
-        self.view_shared = nn.Linear(opt.filters_num, opt.id_emb_size, bias=False)
+        self.logic_unit = nn.Linear(opt.id_emb_size * 2, opt.id_emb_size, bias=False)
 
 
     
@@ -32,6 +34,9 @@ class CARP(nn.Module):
         user_doc = self.user_word_embs(user_doc) # o_shape (bs, doc_len, word_dim)
         item_doc = self.item_word_embs(item_doc)
 
+        user_ids = self.id_user_emb(uids)
+        item_ids = self.id_item_emb(iids)
+
         # === PADDING TECNIQUE === # 
         pad_size = (self.opt.kernel_size - 1) // 2
         u_fea = F.pad(user_doc, (0, 0, pad_size, pad_size), 'constant', 0)
@@ -39,42 +44,65 @@ class CARP(nn.Module):
 
         '''
             Context Encoding
-        '''
-        u_fea = F.relu(self.user_cnn(u_fea.unsqueeze(1))).squeeze(3)  # o_shape (bs, filters, doc_len) 
-        i_fea = F.relu(self.item_cnn(i_fea.unsqueeze(1))).squeeze(3)  # 
-
-        '''
-            Self Attention
             Eq 1
         '''
-        u_fea = torch.transpose(u_fea, 2, 1)
-        i_fea = torch.transpose(i_fea, 2, 1)
-        u_att_mask = F.sigmoid(self.user_selfattn(u_fea, u_fea, u_fea)[0]) # o_shape (bs, filters, doc_len)
-        i_att_mask = F.sigmoid(self.item_selfattn(i_fea, i_fea, i_fea)[0]) 
-
-        u_fea = u_fea * u_att_mask # o_shape (bs, filters, doc_len)
-        i_fea = i_fea * i_att_mask
-
-        # Viewpoint Shared Transform
-        user_points = self.view_shared(u_fea) # o_shape (bs, doc_len, k=32)
-        item_points = self.view_shared(i_fea)
-
-        # Viewpoint Especific Context
-        user_vector = torch.mean(user_points, dim=1)
-        item_vector = torch.mean(item_points, dim=1)
-
-        # Intra Attention
-        user_vector = torch.sum(F.softmax(user_vector.unsqueeze(1) * user_points, dim=1), dim=1)
-        item_vector = torch.sum(F.softmax(item_vector.unsqueeze(1) * item_points, dim=1), dim=1)
+        u_viewpoints = self.user_viewpoint(u_fea, user_ids)
+        i_viewpoints = self.item_viewpoint(i_fea, item_ids)
+        
+        # u_fea = F.relu(self.user_cnn(u_fea.unsqueeze(1))).squeeze(3)  # o_shape (bs, filters, doc_len) 
+        # i_fea = F.relu(self.item_cnn(i_fea.unsqueeze(1))).squeeze(3)  # 
 
         '''
-            Logic Unit Representation,
-            Sentiment Capsules
-            Eq: 3 
+            Self Attention and Intra Attention
+            Eq 1 - 2
         '''
-        # Neural Factorization Machine
-        # logic_unit = torch.cat([user_vector, item_vector], dim=1)
+        u_att = torch.mean(u_viewpoints, dim=1)
+        i_att = torch.mean(i_viewpoints, dim=1)
+        u_att = F.softmax(u_viewpoints * u_att.unsqueeze(1), dim=1)
+        i_att = F.softmax(i_viewpoints * i_att.unsqueeze(1), dim=1)
+
+        u_fea = torch.sum(u_viewpoints * u_att, 1)
+        i_fea = torch.sum(i_viewpoints * i_att, 1)
+
+        '''
+            Logic Unit Representation 
+            Sentiment Capsule
+            Eq 3 - 6
+        '''
+        gated_unit = torch.cat([(u_fea - i_fea), (u_fea * i_fea)], dim=1)
+
+        gated_unit = self.logic_unit(gated_unit)
+        coupling_coeff = F.softmax(gated_unit, dim=1)
+
+        sentiment_capsule = torch.sum(gated_unit * coupling_coeff, dim=1)
+
+        routing = (math.pow(sentiment_capsule.size(0), 2)) / (math.pow(sentiment_capsule.size(0), 2) + 1) 
+        routing = (sentiment_capsule / sentiment_capsule.size(0)) * routing
 
 
-        return user_vector, item_vector
-        # return None, None
+        # return user_vector, item_vector
+        return u_fea, i_fea
+    
+
+class ViewPoint(nn.Module):
+    def __init__(self, opt):
+        super(ViewPoint, self).__init__()
+
+        self.opt = opt
+
+        self.cnn = nn.Conv2d(1, opt.filters_num, (opt.kernel_size, opt.word_dim))
+
+        self.review_linear = nn.Linear(opt.filters_num, 1)
+        self.id_linear = nn.Linear(opt.id_emb_size, opt.filters_num, bias=False)
+
+        self.global_viewpoint = nn.Linear(opt.filters_num, opt.id_emb_size, bias=False)
+
+
+    def forward(self, fea, id_fea):
+        fea = F.relu(self.cnn(fea.unsqueeze(1)).squeeze(3)).transpose(2, 1)
+        viewpoint = F.sigmoid(self.review_linear(fea) + self.id_linear(id_fea).unsqueeze(1))
+        context = fea * viewpoint
+
+        viewpoint = self.global_viewpoint(context)
+
+        return viewpoint
