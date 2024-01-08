@@ -48,8 +48,10 @@ class ConvMF(nn.Module):
     def reset_para(self):
 
         nn.init.xavier_normal_(self.item_cnn.weight)
+        nn.init.constant_(self.item_cnn.bias, 0.1)
 
         nn.init.uniform_(self.item_fc_linear.weight, -0.1, 0.1)
+        nn.init.constant_(self.item_fc_linear.bias, 0.1)
 
         if self.opt.use_word_embedding:
             w2v = torch.from_numpy(np.load(self.opt.w2v_path))

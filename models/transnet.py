@@ -95,6 +95,13 @@ class CNN(nn.Module):
         latent = self.linear(latent)
         return latent  # output shape(batch_size, id_emb_size)
     
+    def reset_para(self):
+        nn.init.xavier_normal_(self.conv[0].weight)
+        nn.init.constant_(self.conv[0].bias, 0.1)
+
+        nn.init.uniform_(self.linear[0].weight, -0.1, 0.1)
+        nn.init.constant_(self.linear[0].bias, 0.1)
+    
 
 class SourceNet(nn.Module):
 
@@ -183,6 +190,13 @@ class TargetNet(nn.Module):
         latent = self.fc(latent)
         prediction = self.fm(latent)
         return latent, prediction
+    
+    def reset_para(self):
+        nn.init.xavier_normal_(self.conv[0].weight)
+        nn.init.constant_(self.conv[0].bias, 0.1)
+
+        nn.init.uniform_(self.fc.weight, -0.1, 0.1)
+        nn.init.constant_(self.fc.bias, 0.1)
     
 
 class FactorizationMachine(nn.Module):

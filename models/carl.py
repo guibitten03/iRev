@@ -63,3 +63,26 @@ class CARL(nn.Module):
         interaction_fea = torch.stack([(uids_emb * iids_emb), uids_emb, iids_emb], 1)
 
         return abstratic_fea, interaction_fea
+
+    def reset_para(self):
+        if self.opt.use_word_embedding:
+            w2v = torch.from_numpy(np.load(self.opt.w2v_path))
+            if self.opt.use_gpu:
+                self.user_embedding.weight.data.copy_(w2v.cuda())
+                self.item_embedding.weight.data.copy_(w2v.cuda())
+            else:
+                self.user_embedding.weight.data.copy_(w2v)
+                self.item_embedding.weight.data.copy_(w2v)
+        else:
+            nn.init.uniform_(self.user_embedding.weight, -0.1, 0.1)
+            nn.init.uniform_(self.item_embedding.weight, -0.1, 0.1)
+
+        for x in [self.user_cnn, 
+                  self.item_cnn, 
+                  self.abstract_user_cnn, 
+                  self.abstract_item_cnn]:
+            nn.init.xavier_normal_(x.weight)
+            nn.init.constant_(x.bias, 0.1)
+
+        nn.init.uniform_(self.shared_mlp.weight, -0.1, 0.1)
+        nn.init.constant_(self.shared_mlp.bias, 0.1)

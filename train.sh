@@ -44,4 +44,6 @@ python3 main.py train --model=A3NCF --dataset=AMAZON_FASHION_data --num_fea=1 --
 
 python3 main.py train --model=CARP --dataset=AMAZON_FASHION_data --output=lfm --emb_opt=word2vec
 
+python3 main.py train --model=CARM --dataset=AMAZON_FASHION_data --emb_opt=word2vec
+
 # python3 main.py train --model=MAN --dataset=AMAZON_FASHION_data --batch_size=2 --man=True

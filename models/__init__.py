@@ -14,6 +14,7 @@ from .a3ncf import A3NCF
 from .carp import CARP
 from .man import MAN
 from .tarmf import TARMF
+from .carm import CARM
 
 
 __all__ = [
@@ -32,5 +33,6 @@ __all__ = [
     "A3NCF",
     "CARP",
     "MAN",
-    "TARMF"
+    "TARMF",
+    "CARM",
 ]

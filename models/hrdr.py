@@ -123,18 +123,20 @@ class Net(nn.Module):
         self.rating_matrix.weight.data.copy_(ratingMatrix.cuda())
         # self.iid_embedding.weight.data.copy_(ratingMatrix.T.cuda())
 
+
     def init_model_weight(self):
         nn.init.xavier_uniform_(self.cnn.weight)
         nn.init.uniform_(self.cnn.bias, a=-0.1, b=0.1)
 
-        nn.init.xavier_uniform_(self.rating_mlp[0].weight)
-        nn.init.constant_(self.rating_mlp[0].bias, 0.1)
 
-        nn.init.xavier_uniform_(self.rating_mlp[2].weight)
-        nn.init.constant_(self.rating_mlp[2].bias, 0.1)
-
-        nn.init.xavier_uniform_(self.rating_mlp[4].weight)
-        nn.init.constant_(self.rating_mlp[4].bias, 0.1)
+        for x in [self.rating_mlp[0],
+                  self.rating_mlp[2],
+                  self.rating_mlp[4],
+                  self.id_linear,
+                  self.review_linear]:
+            # nn.init.uniform_(x.weight, -0.1, 0.1)
+            nn.init.xavier_normal_(x.weight)
+            nn.init.constant_(x.bias, 0.1)
 
 
 

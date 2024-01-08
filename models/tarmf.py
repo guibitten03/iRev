@@ -99,6 +99,18 @@ class TARMF(nn.Module):
             nn.init.uniform_(x[0].weight, -0.1, 0.1)
             nn.init.constant_(x[0].bias, 0.1)
 
+        if self.opt.use_word_embedding:
+            w2v = torch.from_numpy(np.load(self.opt.w2v_path))
+            if self.opt.use_gpu:
+                self.user_embeddings.weight.data.copy_(w2v.cuda())
+                self.item_embeddings.weight.data.copy_(w2v.cuda())
+            else:
+                self.user_embeddings.weight.data.copy_(w2v)
+                self.item_embeddings.weight.data.copy_(w2v)
+        else:
+            nn.init.uniform_(self.user_embeddings.weight, -0.1, 0.1)
+            nn.init.uniform_(self.item_embeddings.weight, -0.1, 0.1)
+
 
     def fit_pmf(self, dataset):
 

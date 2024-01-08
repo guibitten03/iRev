@@ -24,6 +24,8 @@ class ANR(nn.Module):
         
         # self.rp = RatingPrediction(opt)
 
+        self.reset_para()
+
 
     def forward(self, datas):
         _, _, uids, iids, _, _, user_doc, item_doc = datas
@@ -56,6 +58,19 @@ class ANR(nn.Module):
 
         return user_rep, item_rep
         # return ratings, None
+    
+    def reset_para(self):
+        if self.opt.use_word_embedding:
+            w2v = torch.from_numpy(np.load(self.opt.w2v_path))
+            if self.opt.use_gpu:
+                self.user_emb.weight.data.copy_(w2v.cuda())
+                self.item_emb.weight.data.copy_(w2v.cuda())
+            else:
+                self.user_emb.weight.data.copy_(w2v)
+                self.item_emb.weight.data.copy_(w2v)
+        else:
+            nn.init.uniform_(self.user_emb.weight, -0.1, 0.1)
+            nn.init.uniform_(self.item_emb.weight, -0.1, 0.1)
 
 
 class AspectRepresentationLearning(nn.Module):
@@ -78,6 +93,13 @@ class AspectRepresentationLearning(nn.Module):
         representation = torch.sum(aspects_attention * aspects, dim=1)
 
         return aspects_attention, representation
+    
+    def reset_para(self):
+        nn.init.xavier_normal_(self.aspect_projection.weight)
+        nn.init.constant_(self.aspect_projection.bias, 0.1)
+
+        nn.init.uniform_(self.shared_projection.weight, -0.1, 0.1)
+        nn.init.constant_(self.shared_projection.bias, 0.1)
 
 
 class AspectImportanceEstimation(nn.Module):
@@ -92,8 +114,6 @@ class AspectImportanceEstimation(nn.Module):
 
         self.user_projection = nn.Linear(opt.doc_len, opt.id_emb_size, bias=False)
         self.item_projection = nn.Linear(opt.doc_len, opt.id_emb_size, bias=False)
-
-
 
 
     def forward(self, u_fea, i_fea):
@@ -113,71 +133,11 @@ class AspectImportanceEstimation(nn.Module):
         i_fea = F.softmax(i_proj * i_fea, dim=1)
 
         return u_fea, i_fea
-
-
-# class AspectImportanceEstimation(nn.Module):
-#     def __init__(self, opt):
-#         super(AspectImportanceEstimation, self).__init__()
-
-#         self.opt = opt
-
-#         self.affinity_matrix = nn.Parameter(torch.Tensor(10, 10), requires_grad=True)
-
-#         # User "Projection": A (h2 x h1) weight matrix, and a (h2 x 1) vector
-#         self.user_projection = nn.Parameter(torch.Tensor(32, 10), requires_grad = True)
-#         self.user_parameters = nn.Parameter(torch.Tensor(32, 1), requires_grad = True)
-
-# 		# Item "Projection": A (h2 x h1) weight matrix, and a (h2 x 1) vector
-#         self.item_projection = nn.Parameter(torch.Tensor(32, 10), requires_grad = True)
-#         self.item_parameters = nn.Parameter(torch.Tensor(32, 1), requires_grad = True)
-
-#         # Reset Para
-#         self.affinity_matrix.data.uniform_(-0.01, 0.01)
-
-#         self.user_projection.data.uniform_(-0.01, 0.01)
-#         self.user_parameters.data.uniform_(-0.01, 0.01)
-
-#         self.item_projection.data.uniform_(-0.01, 0.01)
-#         self.item_parameters.data.uniform_(-0.01, 0.01)
-
-
-#     def forward(self, user_rep, item_rep):
-#         user_rep_t = torch.transpose(user_rep, 1, 2)
-#         item_rep_t = torch.transpose(item_rep, 1, 2)
-        
-#         # === USER IMPORTANCE ASPECTS === #
-
-#         # Eq 5
-#         affinity_matrix = torch.matmul(user_rep, self.affinity_matrix)
-#         affinity_matrix = torch.matmul(affinity_matrix, item_rep_t)
-#         affinity_matrix = F.relu(affinity_matrix)
-
-#         # Eq 6
-#         h_user = torch.matmul(self.user_projection, user_rep_t)
-#         h_item = torch.matmul(self.item_projection, item_rep_t)
-#         h_item = torch.matmul(h_item, torch.transpose(affinity_matrix, 1, 2))
-#         h_user = F.relu(h_user + h_item)
-
-#         user_asp_importance = torch.matmul(torch.transpose(self.user_parameters, 0, 1), h_user)
-#         user_asp_importance = torch.transpose(user_asp_importance, 1, 2)
-#         user_asp_importance = F.softmax(user_asp_importance, dim=1)
-#         user_asp_importance = user_asp_importance.squeeze(2)
-
-#         # === ITEM IMPORTANCE ASPECTS === #
-        
-
-#         # Eq 6
-#         h_item = torch.matmul(self.item_projection, item_rep_t)
-#         h_user = torch.matmul(self.user_projection, user_rep_t)
-#         h_user = torch.matmul(h_user, affinity_matrix)
-#         h_item = F.relu(h_item + h_user)
-
-#         item_asp_importance = torch.matmul(torch.transpose(self.item_parameters, 0, 1), h_item)
-#         item_asp_importance = torch.transpose(item_asp_importance, 1, 2)
-#         item_asp_importance = F.softmax(item_asp_importance, dim=1)
-#         item_asp_importance = item_asp_importance.squeeze(2)
-
-#         return user_asp_importance, item_asp_importance
+    
+    def reset_para(self):
+        for x in [self.user_projection, self.item_projection]:
+            nn.init.uniform_(x.weight, -0.1, 0.1)
+            nn.init.constant_(x.bias, 0.1)
 
 
 class RatingPrediction(nn.Module):
@@ -230,35 +190,3 @@ class RatingPrediction(nn.Module):
         rating_pred = rating_pred + self.global_offset
 
         return rating_pred.squeeze(1)
-
-
-# TESTING 
-# class AspectRepresentationLearning(nn.Module):
-#     def __init__(self, opt):
-#         super(AspectRepresentationLearning, self).__init__()
-
-#         self.opt = opt
-
-#         self.aspects = nn.Parameter(torch.Tensor(5, opt.word_dim, 32), requires_grad=True)
-#         self.conv = nn.Conv2d(opt.doc_len, opt.filters_num, (opt.kernel_size, 32), padding=1)
-#         self.attention = nn.Sequential(
-#             nn.Linear(opt.kernel_size * 5, 32),
-#             nn.Softmax(dim=1)
-#         )
-#         # self.unfold = nn.Unfold((opt.kernel_size, 32), padding=(1, 0))
-
-
-#     def forward(self, doc):
-#         # Eq 1
-#         aspect_projection = torch.matmul(doc.unsqueeze(1), self.aspects) # o_shape (bs, n_asp, doc_len, h1)
-#         aspect_projection = self.conv(aspect_projection.transpose(1, 2))
-#         aspect_projection = self.attention(aspect_projection.view(aspect_projection.shape[0],
-#                                                                   aspect_projection.shape[1],
-#                                                                   -1))
-#         aspect_projection = torch.sum(aspect_projection, dim=1)
-#         # aspect_projection = self.unfold(aspect_projection).transpose(1,2)
-#         # window = aspect_projection.shape[2]
-
-
-#         return aspect_projection
-

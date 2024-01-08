@@ -82,6 +82,19 @@ class CARP(nn.Module):
 
         # return user_vector, item_vector
         return u_fea, i_fea
+
+    def reset_para(self):
+        if self.opt.use_word_embedding:
+            w2v = torch.from_numpy(np.load(self.opt.w2v_path))
+            if self.opt.use_gpu:
+                self.user_word_embs.weight.data.copy_(w2v.cuda())
+                self.item_word_embs.weight.data.copy_(w2v.cuda())
+            else:
+                self.user_word_embs.weight.data.copy_(w2v)
+                self.item_word_embs.weight.data.copy_(w2v)
+        else:
+            nn.init.uniform_(self.user_word_embs.weight, -0.1, 0.1)
+            nn.init.uniform_(self.item_word_embs.weight, -0.1, 0.1)
     
 
 class ViewPoint(nn.Module):
@@ -106,3 +119,13 @@ class ViewPoint(nn.Module):
         viewpoint = self.global_viewpoint(context)
 
         return viewpoint
+    
+    def reset_param(self):
+        nn.init.xavier_normal_(self.cnn.weight)
+        nn.init.constant_(self.cnn.bias, 0.1)
+
+        for x in [self.review_linear,
+                  self.id_linear,
+                  self.global_viewpoint]:
+            nn.init.uniform_(x.weight, -0.1, 0.1)
+            nn.init.constant_(x.bias, 0.1)        
