@@ -15,6 +15,7 @@ from .carp import CARP
 from .man import MAN
 from .tarmf import TARMF
 from .carm import CARM
+from .nrpa import NRPA
 
 
 __all__ = [
@@ -35,4 +36,5 @@ __all__ = [
     "MAN",
     "TARMF",
     "CARM",
+    "NRPA",
 ]
