@@ -70,6 +70,14 @@ def train(**kwargs):
     optimizer = optim.Adam(model.parameters(), lr=opt.lr, weight_decay=opt.weight_decay)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.8)
 
+    if opt.transnet:
+        
+        target_optim = optim.Adam(model.net.target_net.parameters(), lr=opt.lr, weight_decay=opt.weight_decay)
+        target_sr = optim.lr_scheduler.StepLR(target_optim, step_size=5, gamma=0.8)
+
+        trans_optim = optim.Adam(model.net.source_net.trans_param(), lr=opt.lr, weight_decay=opt.weight_decay)
+        trans_sr = optim.lr_scheduler.StepLR(trans_optim, step_size=5, gamma=0.8)
+
     # TRAINING STAGE
     print("start training....")
     min_loss = 1e+10
@@ -100,7 +108,28 @@ def train(**kwargs):
             optimizer.zero_grad()
 
             # PREDICT OUTPUT
-            output = model(train_datas)
+            '''
+                Transnet Operation
+            '''
+            if opt.transnet:
+
+                l1, l2 = model(train_datas)
+                s_lat, output, t_lat, t_pred = l1[0], l1[1], l2[0], l2[1]
+
+
+                loss_t = F.l1_loss(t_pred, scores)
+                target_optim.zero_grad()
+                loss_t.backward()
+                target_optim.step()
+
+                loss_trans = F.mse_loss(s_lat, t_lat.detach())
+                trans_optim.zero_grad()
+                loss_trans.backward()
+                trans_optim.step()
+
+            else:
+
+                output = model(train_datas)
 
             # CALCULATE LOSSES
             mse_loss = mse_func(output, scores)
@@ -137,6 +166,10 @@ def train(**kwargs):
 
         # SMOOTHING BACKPROPAGATION
         scheduler.step()
+
+        if opt.transnet:
+            target_sr.step()
+            trans_sr.step()
         
         mse = total_loss * 1.0 / len(train_data)
         print(f"\ttrain data: loss:{total_loss:.4f}, mse: {mse:.4f};")
@@ -222,7 +255,11 @@ def predict(model, data_loader, opt):
 
             test_data = unpack_input(opt, test_data)
 
-            output = model(test_data)
+            if opt.transnet:
+                output, _ = model(test_data)
+                output = output[1]
+            else:
+                output = model(test_data)
 
             mse_loss = torch.mean((output-scores)**2)
             total_loss += mse_loss.item()
@@ -262,9 +299,9 @@ def predict(model, data_loader, opt):
 
                 grownd_truth = [y[1] for y in [x for x in iteractions if user == x[0]]]
 
-                # ndcg = ndcg_metric(grownd_truth, list_wise, nranks=4)
+                ndcg = ndcg_metric(grownd_truth, list_wise, nranks=4)
 
-                # ndcg_values.append(ndcg)
+                ndcg_values.append(ndcg)
 
 
     
@@ -280,7 +317,8 @@ def predict(model, data_loader, opt):
     else:
         print(f'''MSE mean: {np.array(mse_values).mean():.2f},
                 MAE mean: {np.array(mae_values).mean():.2f}, 
-                RMSE mean: {np.array(rmse_values).mean():.2f},  
+                RMSE mean: {np.array(rmse_values).mean():.2f}, 
+                NDCG mean: {np.array(ndcg_values).mean():.5f}, 
                 PRECISION mean: {np.array(precision_values).mean():.2f},
                 RECALL mean: {np.array(recall_values).mean():.2f}'''
                 

@@ -58,6 +58,9 @@ class Model(nn.Module):
             ui_feature = self.dropout(user_feature)
             output = self.predict_net(ui_feature, uids, iids).squeeze(1)
             return output
+        
+        if self.opt.transnet:
+            return user_feature, item_feature
 
 
         # THROW FUSION NET

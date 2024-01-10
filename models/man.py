@@ -43,19 +43,27 @@ class MAN(nn.Module):
         user_reviews = self.user_review_emb(user_doc)
         item_reviews = self.item_review_emb(item_doc)
 
+        pad = (3 - 1) // 2
+        user_tcn = F.pad(user_reviews, (0, 0, pad, pad), 'constant', 0)
+        item_tcn = F.pad(item_reviews, (0, 0, pad, pad), 'constant', 0)
+
         # TemporalConvolutionNetwork
-        user_tcn = self.user_conv(user_reviews.unsqueeze(1))
-        item_tcn = self.item_conv(item_reviews.unsqueeze(1))
+        user_tcn = self.user_conv(user_tcn.unsqueeze(1))
+        item_tcn = self.item_conv(item_tcn.unsqueeze(1))
 
         '''
             MultiRepresentationAttention
             Eq 4 - 8
         '''
-        euclidean = (user_tcn - item_tcn).pow(2).sum(1).sqrt()
+        euclidean = (user_tcn - item_tcn.permute(0, 1, 3, 2)).pow(2).sum(1).sqrt()
         attention_matrix = 1.0 / (1 + euclidean)
-        attention_matrix = torch.softmax(attention_matrix, dim=1)
-        u_review_level = torch.mul(user_reviews, attention_matrix)
-        i_review_level = torch.mul(item_reviews, attention_matrix)
+        attention_matrix = torch.softmax(torch.sum(attention_matrix, 2), dim=1)
+        u_review_level = user_reviews * attention_matrix.unsqueeze(2)
+        i_review_level = item_reviews * attention_matrix.unsqueeze(2)
+
+        pad = (3 - 1) // 2
+        u_review_level = F.pad(u_review_level, (0, 0, pad, pad), 'constant', 0)
+        i_review_level = F.pad(i_review_level, (0, 0, pad, pad), 'constant', 0)
 
         '''
             InteractionFeatureLearning
@@ -111,24 +119,27 @@ class TemporalConvolutionNetwork(nn.Module):
     def __init__(self, opt, uori='user'):
         super(TemporalConvolutionNetwork, self).__init__()
 
+        self.opt = opt
+
         '''
             Eq 2, 3, 4
         '''
 
-        kernels = [2,3,4]
+        # kernels = [2,3,4]
 
-        self.conv1 = nn.Conv2d(1, opt.filters_num, (kernels[0], opt.word_dim), padding='same')
-        self.conv2 = nn.Conv2d(opt.filters_num, opt.filters_num, (kernels[1], opt.word_dim), padding='same')
-        if uori == 'user':
-            self.conv3 = nn.Conv2d(opt.filters_num, opt.filters_num, (kernels[2], opt.word_dim), padding='same')
-        else:
-            self.conv3 = nn.Conv2d(opt.filters_num, 1, (kernels[2], opt.word_dim), padding='same')
+        self.conv1 = nn.Conv2d(1, opt.filters_num, (opt.kernel_size, opt.word_dim))
+        # self.conv2 = nn.Conv2d(opt.filters_num, opt.filters_num, (opt.kernel_size, opt.word_dim))
+        # if uori == 'user':
+        #     self.conv3 = nn.Conv2d(opt.filters_num, opt.filters_num, (opt.kernel_size, opt.word_dim))
+        # else:
+        #     self.conv3 = nn.Conv2d(opt.filters_num, 1, (opt.kernel_size, opt.word_dim))
 
 
     def forward(self, x):
+
         fea = self.conv1(x)
-        fea = self.conv2(fea)
-        fea = self.conv3(fea)
+        # fea = self.conv2(fea)
+        # fea = self.conv3(fea)
 
         return fea
 
@@ -139,8 +150,8 @@ class InteractionFeatureLearning(nn.Module):
 
         self.opt = opt
 
-        self.user_tcn = nn.Conv2d(1, 1, opt.kernel_size, padding='same')
-        self.item_tcn = nn.Conv2d(1, 1, opt.kernel_size, padding='same')
+        self.user_tcn = nn.Conv2d(1, 1, (opt.kernel_size, opt.word_dim))
+        self.item_tcn = nn.Conv2d(1, 1, (opt.kernel_size, opt.word_dim))
 
         self.user_mlp = nn.Sequential(
             nn.Linear(opt.doc_len, opt.word_dim),
@@ -157,7 +168,7 @@ class InteractionFeatureLearning(nn.Module):
         )
 
         self.ui_features_mlp = nn.Sequential(
-            nn.Linear(opt.word_dim * opt.word_dim * 2, opt.word_dim),
+            nn.Linear(opt.word_dim * 2, opt.word_dim),
             nn.ReLU(),
             nn.Linear(opt.word_dim, opt.fc_dim),
             nn.ReLU()
@@ -173,7 +184,6 @@ class InteractionFeatureLearning(nn.Module):
         user_fea = self.user_mlp(user_fea.permute(0, 2, 1))
         item_fea = self.item_mlp(item_fea.permute(0, 2, 1)) # (128, 300, 300)
 
-        
         ui_fea = torch.cat([user_fea, item_fea], dim=1)
         ui_fea = ui_fea.view(ui_fea.shape[0], ui_fea.shape[1] * ui_fea.shape[2])
         

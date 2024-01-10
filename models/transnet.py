@@ -58,8 +58,8 @@ class TRANSNET(nn.Module):
         )
 
 
-        # return [source_latent, source_prediction.squeeze()], [target_latent, target_prediction.squeeze()]
-        return source_latent, target_latent
+        return [source_latent, source_prediction.squeeze()], [target_latent, target_prediction.squeeze()]
+        # return source_latent, target_latent
 
 
 
@@ -161,7 +161,8 @@ class SourceNet(nn.Module):
     def trans_param(self):
         return [x for x in self.cnn_u.parameters()] + \
                [x for x in self.cnn_i.parameters()] + \
-               [x for x in self.transform.parameters()]
+               [x for x in self.z0_transform.parameters()] + \
+                [x for x in self.z1_transform.parameters()]
 
 
 class TargetNet(nn.Module):

@@ -72,6 +72,7 @@ class DefaultConfig:
     hrdr = False
     topics = False
     man = False
+    transnet = False
 
 
     def set_path(self, name):

@@ -23,7 +23,7 @@ python3 main.py train --model=ConvMF --dataset=AMAZON_FASHION_data --emb_opt=wor
 # python3 main.py train --model=ConvMF --dataset=AMAZON_FASHION_data --emb_opt=fasttext --num-fea=1
 
 # python3 main.py train --model=TRANSNET --dataset=AMAZON_FASHION_data --num-fea=1 --output=fm
-python3 main.py train --model=TRANSNET --dataset=AMAZON_FASHION_data --emb_opt=word2vec --num-fea=1 --output=fm
+python3 main.py train --model=TRANSNET --dataset=AMAZON_FASHION_data --emb_opt=word2vec --num-fea=1 --output=fm --transnet=True
 # python3 main.py train --model=TRANSNET --dataset=AMAZON_FASHION_data --emb_opt=fasttext --num-fea=1 --output=fm
 
 # python3 main.py train --model=ANR --dataset=AMAZON_FASHION_data --num-fea=1 
@@ -46,4 +46,4 @@ python3 main.py train --model=CARP --dataset=AMAZON_FASHION_data --output=lfm --
 
 python3 main.py train --model=CARM --dataset=AMAZON_FASHION_data --emb_opt=word2vec
 
-# python3 main.py train --model=MAN --dataset=AMAZON_FASHION_data --batch_size=2 --man=True
+python3 main.py train --model=MAN --dataset=AMAZON_FASHION_data --batch_size=2 --man=True
