@@ -1,0 +1,50 @@
+SAVE FOLDER： ../dataset/.data/Office_Products_data_word2vec
+Warning: the word embedding file is not provided, will be initialized randomly
+2024-01-11 12:26:14: Step1: loading raw review datasets...
+===============Start:all  rawData size======================
+dataNum: 800144
+userNum: 101498
+itemNum: 27965
+data densiy: 0.0003
+===============End: rawData size========================
+------------------------------------------------------------
+2024-01-11 12:26:18 Step2: split datsets into train/val/test, save into npy data
+===============Start: no-preprocess: trainData size======================
+dataNum: 640115
+userNum: 101484
+itemNum: 27943
+===============End: no-preprocess: trainData size========================
+===============Start--process finished: trainData size======================
+dataNum: 640220
+userNum (config): 101498
+itemNum (config): 27965
+===============End-process finished: trainData size========================
+2024-01-11 12:26:26
+Train data size (config): 640220
+Val data size (config): 79962
+Test data size (config): 79962
+------------------------------------------------------------
+2024-01-11 12:26:26 Step3: Construct the vocab and user/item reviews from training set.
+LDA transform matrix: (129463, 32)
+The vocab size: 50002
+Average user document length: 158.37570198427557
+Average item document length: 285.1916323976399
+2024-01-11 12:33:51
+u_max_r:9
+i_max_r:31
+r_max_len：63
+------------------------------------------------------------
+2024-01-11 12:33:53 Step4: padding all the text and id lists and save into npy.
+user document length: 500
+item document length: 500
+------------------------------------------------------------
+2024-01-11 12:34:04 start writing npy...
+2024-01-11 12:34:09 write finised
+------------------------------------------------------------
+2024-01-11 12:34:09 Step5: start word embedding mapping...
+############################
+out of vocab: 15063
+w2v size: 50002
+############################
+Vocab Size and Word Dim: (50002, 300)
+2024-01-11 12:34:25 all steps finised, cost time: 490.4695s

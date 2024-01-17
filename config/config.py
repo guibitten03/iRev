@@ -266,3 +266,81 @@ class Prime_Pantry_data_Config(DefaultConfig):
 
     user_num = 14175 + 2
     item_num = 4970 + 2
+
+class Office_Products_data_Config(DefaultConfig):
+    
+    # DATASET FEATURES CONFIG
+    setting_path = '.data/Office_Products_data_'
+        
+    vocab_size = 50002
+    
+    r_max_len = 63
+
+    u_max_r =9
+    i_max_r = 31
+
+    train_data_size = 640220
+    test_data_size = 79962
+    val_data_size = 79962
+
+    user_num = 101498 + 2
+    item_num = 27965 + 2
+
+class Tamp_data_Config(DefaultConfig):
+    
+    # DATASET FEATURES CONFIG
+    setting_path = '.data/Tamp_data_'
+        
+    vocab_size = 50002
+    
+    r_max_len = 91
+
+    u_max_r = 3
+    i_max_r = 64
+
+    train_data_size = 387481
+    test_data_size = 33704
+    val_data_size = 33704
+
+    user_num = 165718 + 2
+    item_num = 9050 + 2
+
+
+class Tucso_data_Config(DefaultConfig):
+    
+    # DATASET FEATURES CONFIG
+    setting_path = '.data/Tucso_data_'
+        
+    vocab_size = 50002
+    
+    r_max_len = 93
+
+    u_max_r = 3
+    i_max_r = 56
+
+    train_data_size = 339986
+    test_data_size = 32447
+    val_data_size = 32447
+
+    user_num = 121312 + 2
+    item_num = 9250 + 2
+
+
+class Philladelphi_data_Config(DefaultConfig):
+    
+    # DATASET FEATURES CONFIG
+    setting_path = '.data/Philladelphi_data_'
+        
+    vocab_size = 50002
+    
+    r_max_len = 86
+
+    u_max_r = 3
+    i_max_r = 84
+
+    train_data_size = 811640
+    test_data_size = 77956
+    val_data_size = 77956
+
+    user_num = 279857 + 2
+    item_num = 14569 + 2

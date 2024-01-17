@@ -303,12 +303,21 @@ def predict(model, data_loader, opt):
 
                 ndcg_values.append(ndcg)
 
+    # if opt.diversity_metrics:
+    #     ...
+        # Preciso das categorias dos itens
+        # Preciso de listas de recomendação e listas verdadeiras
+        # Calculo métricas de diversidade
 
     
     if opt.statistical_test:
         df = {
             "mse":mse_values, 
             "mae":mae_values,
+            "rmse": rmse_values,
+            "ndcg": ndcg_values,
+            "precision": precision_values,
+            "recall": recall_values,
             }
         
         df = pd.DataFrame(df)

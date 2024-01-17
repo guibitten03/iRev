@@ -66,6 +66,7 @@ if __name__ == "__main__":
     if yelp_data:
         for line in file:
             value = line.split('\t')
+            if(len(value) < 4): continue
             reviews.append(value[3])
             users_id.append(value[0])
             items_id.append(value[1])

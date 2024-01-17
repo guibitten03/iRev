@@ -12,6 +12,7 @@ dataset/.data/
 preprocess_data/.data/
 preprocess_data/.metadata/
 preprocess_data/language_models/
+ZeroShot/
 
 # Distribution / packaging
 .Python
