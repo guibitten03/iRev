@@ -6,6 +6,9 @@ import numpy as np
 import pandas as pd
 import torch.nn.functional as F
 
+import pickle as pkl
+import joblib
+
 from .pmf import ProbabilisticMatrixFatorization
 
 
@@ -23,8 +26,8 @@ class ConvMF(nn.Module):
         self.item_fc_linear = nn.Linear(opt.filters_num, opt.fc_dim)
         self.dropout = nn.Dropout(self.opt.drop_out)
         
-        train = pd.read_csv(f"dataset/.data/{self.opt.dataset}_{self.opt.emb_opt}/train/Train.csv")
-        self.fit_pmf(train)
+        self.user_features = torch.Tensor(np.load(f"checkpoints/user_features_pmf_{opt.dataset}_{opt.emb_opt}.npy")).to('cuda')
+        self.item_features = torch.Tensor(np.load(f"checkpoints/item_features_pmf_{opt.dataset}_{opt.emb_opt}.npy")).to('cuda')
 
         self.reset_para()   
 
@@ -38,9 +41,7 @@ class ConvMF(nn.Module):
         i_fea = F.max_pool1d(i_fea, i_fea.size(2)).squeeze(2)
         i_fea = self.dropout(self.item_fc_linear(i_fea))
 
-        self.pmf_model.user_features = self.pmf_model.user_features.to('cuda')
-
-        u_fea = self.pmf_model.user_features[uids]
+        u_fea = self.user_features[uids]
 
         return torch.stack([u_fea], 1), torch.stack([i_fea], 1)
 
@@ -63,7 +64,7 @@ class ConvMF(nn.Module):
             nn.init.uniform_(self.item_word_embs.weight, -0.1, 0.1)
 
 
-    def fit_pmf(self, dataset):
+    # def fit_pmf(self, dataset):
 
-        self.pmf_model = ProbabilisticMatrixFatorization(dataset)
-        self.pmf_model.fit()
+    #     self.pmf_model = ProbabilisticMatrixFatorization(dataset)
+    #     self.pmf_model.fit()

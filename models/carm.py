@@ -27,8 +27,8 @@ class CARM(nn.Module):
         self.item_fc_linear = nn.Linear(opt.filters_num, opt.fc_dim)
         self.dropout = nn.Dropout(self.opt.drop_out)
 
-        train = pd.read_csv(f"dataset/.data/{self.opt.dataset}_{self.opt.emb_opt}/train/Train.csv")
-        self.fit_pmf(train)
+        self.user_features = torch.Tensor(np.load(f"checkpoints/user_features_pmf_{opt.dataset}_{opt.emb_opt}.npy")).to('cuda')
+        self.item_features = torch.Tensor(np.load(f"checkpoints/item_features_pmf_{opt.dataset}_{opt.emb_opt}.npy")).to('cuda')
 
         self.reset_para()   
 
@@ -41,11 +41,8 @@ class CARM(nn.Module):
         u_fea = self.user_cnn(user_reviews)
         i_fea = self.item_cnn(item_reviews)
 
-        self.pmf_model.user_features = self.pmf_model.user_features.to('cuda')
-        self.pmf_model.item_features = self.pmf_model.item_features.to('cuda')
-
-        u_factors = self.pmf_model.user_features[uids]
-        i_factors = self.pmf_model.item_features[iids]
+        u_factors = self.user_features[uids]
+        i_factors = self.item_features[iids]
 
         u_fea = u_fea + u_factors
         i_fea = i_fea + i_factors
@@ -71,12 +68,6 @@ class CARM(nn.Module):
         for x in [self.user_fc_linear, self.item_fc_linear]:
             nn.init.uniform_(x.weight, -0.1, 0.1)
             nn.init.constant_(x.bias, 0.1)
-
-
-    def fit_pmf(self, dataset):
-
-        self.pmf_model = ProbabilisticMatrixFatorization(dataset)
-        self.pmf_model.fit()
 
 
 class CNN(nn.Module):

@@ -45,8 +45,8 @@ class TARMF(nn.Module):
                             nn.Tanh()
         )
 
-        train = pd.read_csv(f"dataset/.data/{self.opt.dataset}_{self.opt.emb_opt}/train/Train.csv")
-        self.fit_pmf(train)
+        self.user_features = torch.Tensor(np.load(f"checkpoints/user_features_pmf_{opt.dataset}_{opt.emb_opt}.npy")).to('cuda')
+        self.item_features = torch.Tensor(np.load(f"checkpoints/item_features_pmf_{opt.dataset}_{opt.emb_opt}.npy")).to('cuda')
 
         self.reset_para()
 
@@ -80,10 +80,8 @@ class TARMF(nn.Module):
         user_fea = self.user_proj(user_fea)
         item_fea = self.item_proj(item_fea)
 
-        self.pmf_model.user_features = self.pmf_model.user_features.to('cuda')
-        self.pmf_model.item_features = self.pmf_model.item_features.to('cuda')
-        u_r_fea = self.pmf_model.user_features[uids]
-        i_r_fea = self.pmf_model.item_features[iids]
+        u_r_fea = self.user_features[uids]
+        i_r_fea = self.item_features[iids]
 
         user_fea = torch.cat([user_fea, u_r_fea], dim=1)
         item_fea = torch.cat([item_fea, i_r_fea], dim=1)
@@ -110,9 +108,3 @@ class TARMF(nn.Module):
         else:
             nn.init.uniform_(self.user_embeddings.weight, -0.1, 0.1)
             nn.init.uniform_(self.item_embeddings.weight, -0.1, 0.1)
-
-
-    def fit_pmf(self, dataset):
-
-        self.pmf_model = ProbabilisticMatrixFatorization(dataset)
-        self.pmf_model.fit()

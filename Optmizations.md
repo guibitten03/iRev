@@ -1,0 +1,1 @@
+- Treinar a fatorização de matrizes globalmente.
