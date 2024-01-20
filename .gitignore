@@ -13,6 +13,7 @@ preprocess_data/.data/
 preprocess_data/.metadata/
 preprocess_data/language_models/
 ZeroShot/
+FineTunning/
 
 # Distribution / packaging
 .Python

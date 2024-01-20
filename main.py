@@ -311,17 +311,25 @@ def predict(model, data_loader, opt):
 
     
     if opt.statistical_test:
-        df = {
+
+        df_error = {
             "mse":mse_values, 
             "mae":mae_values,
             "rmse": rmse_values,
-            "ndcg": ndcg_values,
             "precision": precision_values,
             "recall": recall_values,
             }
         
-        df = pd.DataFrame(df)
-        df.to_csv(f"results/{opt.model}_{opt.dataset}_{opt.emb_opt}_results.csv", index=False)
+        df_error = pd.DataFrame(df_error)
+        df_error.to_csv(f"results/{opt.model}_{opt.dataset}_{opt.emb_opt}_results_error.csv", index=False)
+
+        df_rank = {
+            "ndcg":ndcg_values, 
+            }
+        
+        df_rank = pd.DataFrame(df_rank)
+        df_rank.to_csv(f"results/{opt.model}_{opt.dataset}_{opt.emb_opt}_results_rank.csv", index=False)
+
 
     else:
         print(f'''MSE mean: {np.array(mse_values).mean():.2f},
