@@ -67,6 +67,7 @@ class DefaultConfig:
     # TEST CONFIG
     ranking_metrics = False
     statistical_test = False
+    diversity_metrics = False
 
     # ALGORITHMS PARTICULAR CONFIGURATIONS
     hrdr = False

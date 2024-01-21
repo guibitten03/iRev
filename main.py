@@ -20,6 +20,8 @@ import config
 from utils.utils import *
 
 from metrics.ndcg import ndcg_metric
+from metrics.novelty import novelty
+from metrics.diversity import diversity
 
 # @TRAIN FUNCTION 
 def train(**kwargs):
@@ -241,6 +243,8 @@ def predict(model, data_loader, opt):
     ndcg_values = []
     precision_values = []
     recall_values = []
+    novelty_values = []
+    diversity_values = []
     
     # MODEL IN EVALUTATION STAGE
     model.eval()
@@ -268,12 +272,16 @@ def predict(model, data_loader, opt):
             total_maeloss += mae_loss.item()
 
             rmse, precision, recall = calculate_metrics(scores, output)
+            novel = novelty(scores.cpu().tolist(), output.cpu().tolist())
+            diver = diversity(scores.cpu().tolist(), output.cpu().tolist())
 
             mse_values.append(mse_loss.cpu().item())
             rmse_values.append(rmse.item())
             mae_values.append(mae_loss.cpu().item())
             precision_values.append(precision.item())
             recall_values.append(recall.item())
+            novelty_values.append(novel)
+            diversity_values.append(diver)
 
     if opt.ranking_metrics:
         iteractions, scores = next(iter(data_loader))
@@ -329,6 +337,8 @@ def predict(model, data_loader, opt):
             "rmse": rmse_values,
             "precision": precision_values,
             "recall": recall_values,
+            "diversity": diversity_values,
+            "novelty": novelty_values,
             }
         
         df_error = pd.DataFrame(df_error)
@@ -348,7 +358,9 @@ def predict(model, data_loader, opt):
                 RMSE mean: {np.array(rmse_values).mean():.2f}, 
                 NDCG mean: {np.array(ndcg_values).mean():.5f}, 
                 PRECISION mean: {np.array(precision_values).mean():.2f},
-                RECALL mean: {np.array(recall_values).mean():.2f}'''
+                RECALL mean: {np.array(recall_values).mean():.2f},
+                NOVELTY mean: {np.array(novelty_values).mean():.2f},
+                DIVERSITY mean: {np.array(diversity_values).mean():.2f}'''
                 
             )
 
