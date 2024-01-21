@@ -283,12 +283,23 @@ def predict(model, data_loader, opt):
 
         with torch.no_grad():
             for user in user_ids:
-                test_data = unpack_input(opt, zip([user]*len(item_ids), item_ids))
+                test_data = unpack_input(opt, zip([user], [0]))
+                # test_data = unpack_input(opt, zip([user]*len(item_ids), item_ids))
+
+                # Here, I have the itens that my user consume
+                user_itens = test_data[4].cpu().tolist()[0]
+
+                n_id_itens = opt.item_num - 1
+                user_itens = [x for x in user_itens if x < n_id_itens]
+
+                test_data = unpack_input(opt, zip([user]*len(user_itens), user_itens))
 
                 output = model(test_data)
 
-                iids, output = test_data[3].cpu(), output.cpu()
-                iids = [x.item() for x in iids]
+                # iids, output = test_data[3].cpu(), output.cpu()
+                output = output.cpu()
+                # iids = [x.item() for x in iids]
+                iids = user_itens
                 output = [x.item() for x in output]
 
 
