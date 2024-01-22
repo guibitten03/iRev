@@ -19,4 +19,4 @@ def novelty(true, pred):
     novidades.append(t - media)
 
   # Retorna a média das novidades.
-  return sum(novidades) / len(novidades)
+  return abs(sum(novidades) / len(novidades))

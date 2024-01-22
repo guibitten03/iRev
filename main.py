@@ -302,7 +302,15 @@ def predict(model, data_loader, opt):
 
                 test_data = unpack_input(opt, zip([user]*len(user_itens), user_itens))
 
-                output = model(test_data)
+                if opt.transnet:
+                    output, _ = model(test_data)
+                    output = output[1]
+                    if len(output.shape) == 0:
+                        break
+
+                else:
+                    output = model(test_data)
+
 
                 # iids, output = test_data[3].cpu(), output.cpu()
                 output = output.cpu()

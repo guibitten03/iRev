@@ -31,5 +31,5 @@ do
 
     # python3 main.py train --model=CARM --dataset=$dataset --emb_opt=word2vec 
 
-    python3 main.py train --model=MAN --dataset=$dataset --batch_size=16 --man=True --emb_opt=word2vec 
+    python3 main.py train --model=MAN --dataset=$dataset --batch_size=32 --man=True --emb_opt=word2vec --output=nfm
 done
