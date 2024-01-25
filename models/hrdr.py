@@ -38,15 +38,16 @@ class Net(nn.Module):
             Construct a matrix user_num x item_num of ids embeddings
         '''
         self.id_embedding = nn.Embedding(ui_id_num, opt.id_emb_size)
-        self.rating_matrix = nn.Embedding(opt.user_num, opt.item_num)  # user/item num * 32
-        self.rating_matrix.weight.requires_grad = False
+        # self.rating_matrix = nn.Embedding(opt.user_num, opt.item_num)  # user/item num * 32
+        # self.rating_matrix.weight.requires_grad = False
         self.word_embs = nn.Embedding(self.opt.vocab_size, self.opt.word_dim)  # vocab_size * 300
 
         '''
             Eq 1
         '''
         self.rating_mlp = nn.Sequential(
-            nn.Linear(id_num, id_num // 2),
+            # nn.Linear(id_num, id_num // 2),
+            nn.Linear(opt.id_emb_size, id_num // 2),
             nn.Tanh(),
             nn.Linear(id_num // 2, id_num // 4),
             nn.Tanh(),
@@ -79,10 +80,24 @@ class Net(nn.Module):
         '''
             Get respective id embedding: No grad.
         '''
+        # rating_matrix = torch.from_numpy(np.load(self.opt.ratingMatrix_path))
+
+        user_features = torch.Tensor(np.load(f"checkpoints/user_features_pmf_{self.opt.dataset}_{self.opt.emb_opt}.npy"))
+        item_features = torch.Tensor(np.load(f"checkpoints/item_features_pmf_{self.opt.dataset}_{self.opt.emb_opt}.npy"))
+
         if uori == 'user':
-            matrix_vector = self.rating_matrix(ids)
+            # matrix_vector = rating_matrix[ids.cpu()]
+            matrix_vector = user_features[ids.cpu()]
+            matrix_vector = matrix_vector.cuda()
         else:
-            matrix_vector = (self.rating_matrix.weight[:, ids]).t()
+            # matrix_vector = (rating_matrix[:, ids.cpu()]).t()
+            matrix_vector = item_features[ids.cpu()]
+            matrix_vector = matrix_vector.cuda()
+
+        # if uori == 'user':
+        #     matrix_vector = self.rating_matrix(ids)
+        # else:
+        #     matrix_vector = (self.rating_matrix.weight[:, ids]).t()
 
 
         '''
@@ -119,8 +134,9 @@ class Net(nn.Module):
             nn.init.xavier_normal_(self.word_embs.weight)
 
         # ----------------Matrix init method--------------#
-        ratingMatrix = torch.from_numpy(np.load(self.opt.ratingMatrix_path))
-        self.rating_matrix.weight.data.copy_(ratingMatrix.cuda())
+        # ratingMatrix = torch.from_numpy(np.load(self.opt.ratingMatrix_path))
+        # self.rating_matrix.weight.data.copy_(ratingMatrix)
+        # self.rating_matrix.weight.data.copy_(ratingMatrix.cuda())
         # self.iid_embedding.weight.data.copy_(ratingMatrix.T.cuda())
 
 

@@ -48,8 +48,10 @@ class MAN(nn.Module):
         item_tcn = F.pad(item_reviews, (0, 0, pad, pad), 'constant', 0)
 
         # TemporalConvolutionNetwork
-        user_tcn = self.user_conv(user_tcn.unsqueeze(1))
-        item_tcn = self.item_conv(item_tcn.unsqueeze(1))
+        # user_tcn = self.user_conv(user_tcn.unsqueeze(1))
+        # item_tcn = self.item_conv(item_tcn.unsqueeze(1))
+        user_tcn = self.user_conv(user_reviews.unsqueeze(1))
+        item_tcn = self.item_conv(item_reviews.unsqueeze(1))
 
         '''
             MultiRepresentationAttention
