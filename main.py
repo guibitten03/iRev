@@ -47,7 +47,12 @@ def train(**kwargs):
     # IMPORT MODEL
     if 'model' not in kwargs:
         raise Exception("Model not provided.")
-    model = Model(opt, getattr(models, opt.model))
+    
+    if opt.bert:
+        opt.model = f"{opt.model}BERT"
+        model = Model(opt, getattr(models, opt.model))
+    else:
+        model = Model(opt, getattr(models, opt.model))
     print(f"Model: {opt.model}")
 
     # SENDING MODEL TO GPU, IF EXISTS
@@ -133,6 +138,8 @@ def train(**kwargs):
 
                 output = model(train_datas)
 
+            
+
             # CALCULATE LOSSES
             mse_loss = mse_func(output, scores)
             total_loss += mse_loss.item() * len(scores)
@@ -200,6 +207,9 @@ def test(**kwargs):
         opt = getattr(config, kwargs['dataset'] + '_Config')()
     opt.parse(kwargs)
 
+    if opt.bert:
+        opt.model = f"{opt.model}BERT"
+
     opt.pth_path = f"checkpoints/{opt.model}_{opt.dataset}_{opt.emb_opt}.pth"
 
     # PARALLEL CONFIG
@@ -215,6 +225,7 @@ def test(**kwargs):
         torch.cuda.set_device(opt.gpu_id)
 
     model = Model(opt, getattr(models, opt.model))
+    print(f"Model: {opt.model}")
     
     if opt.use_gpu:
         model.cuda()
@@ -406,10 +417,22 @@ def unpack_input(opt, x):
 
         shift = opt.user_num - 2
         item_doc = opt.topic_matrix[[x + shift for x in iids]] 
-        
+
     
-    data = [user_reviews, item_reviews, uids, iids, user_item2id, item_user2id, user_doc, item_doc]
-    data = list(map(lambda x: torch.LongTensor(x).cuda(), data))
+    if opt.bert:
+        data = [torch.FloatTensor(user_reviews).cuda(), 
+                torch.FloatTensor(item_reviews).cuda(),
+                torch.LongTensor(uids).cuda(), 
+                torch.LongTensor(iids).cuda(), 
+                torch.LongTensor(user_item2id).cuda(),
+                torch.LongTensor(item_user2id).cuda(), 
+                torch.FloatTensor(user_doc).cuda(), 
+                torch.FloatTensor(item_doc).cuda()]
+        
+    else:
+        data = [user_reviews, item_reviews, uids, iids, user_item2id, item_user2id, user_doc, item_doc]
+        data = list(map(lambda x: torch.LongTensor(x).cuda(), data))
+
 
     return data
 

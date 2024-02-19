@@ -17,6 +17,7 @@ from .tarmf import TARMF
 from .carm import CARM
 from .nrpa import NRPA
 from .pmf import ProbabilisticMatrixFatorization
+from .deepconnbert import DeepCoNNBERT
 
 # NRPA
 # ARTAN

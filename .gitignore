@@ -14,6 +14,7 @@ preprocess_data/.metadata/
 preprocess_data/language_models/
 ZeroShot/
 FineTunning/
+Bert_Model/
 
 # Distribution / packaging
 .Python

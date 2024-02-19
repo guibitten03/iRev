@@ -1,4 +1,5 @@
 from .config import DefaultConfig
+from .config import All_Beauty_data_Config
 from .config import AMAZON_FASHION_data_Config
 from .config import Digital_Music_data_Config
 from .config import Video_Games_data_Config
@@ -14,6 +15,7 @@ from .config import Tucso_data_Config
 
 __all__ = [
     "DefaultConfig",
+    "All_Beauty_data_Config",
     "AMAZON_FASHION_data_Config",
     "Digital_Music_data_Config",
     "Video_Games_data_Config",

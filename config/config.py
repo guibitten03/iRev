@@ -75,6 +75,9 @@ class DefaultConfig:
     man = False
     transnet = False
 
+    # BERT EMBEDDING
+    bert = False
+
 
     def set_path(self, name):
 
@@ -91,6 +94,12 @@ class DefaultConfig:
 
         self.user_doc_path = f'{prefix}/userDoc2Index.npy'
         self.item_doc_path = f'{prefix}/itemDoc2Index.npy'
+
+        self.user_bert_doc_path = f"{prefix}/userBertDoc.npy"
+        self.item_bert_doc_path = f"{prefix}/itemBertDoc.npy"
+
+        self.user_review_bert_path = f"{prefix}/userBertReviews.npy"
+        self.item_review_bert_path = f"{prefix}/itemBertReviews.npy"
 
         self.ratingMatrix_path = f"{prefix}/Rating_Matrix.npy"
 
@@ -111,12 +120,20 @@ class DefaultConfig:
 
         # LOAD DATASET FEATURES
         print("load npy from dist...")
-        self.users_review_list = np.load(self.user_list_path, encoding='bytes')
-        self.items_review_list = np.load(self.item_list_path, encoding='bytes')
+
+        if self.bert:
+            self.user_doc = np.load(self.user_bert_doc_path, encoding='bytes')
+            self.item_doc = np.load(self.item_bert_doc_path, encoding='bytes')
+            self.users_review_list = np.load(self.user_review_bert_path, encoding='bytes')
+            self.items_review_list = np.load(self.item_review_bert_path, encoding='bytes')
+        else:
+            self.users_review_list = np.load(self.user_list_path, encoding='bytes')
+            self.items_review_list = np.load(self.item_list_path, encoding='bytes')
+            self.user_doc = np.load(self.user_doc_path, encoding='bytes')
+            self.item_doc = np.load(self.item_doc_path, encoding='bytes')
+
         self.user2itemid_list = np.load(self.user2itemid_path, encoding='bytes')
         self.item2userid_list = np.load(self.item2userid_path, encoding='bytes')
-        self.user_doc = np.load(self.user_doc_path, encoding='bytes')
-        self.item_doc = np.load(self.item_doc_path, encoding='bytes')
 
         if self.topics:
             self.topic_matrix = np.load(self.topicMatrix_path, encoding='bytes')
@@ -130,6 +147,24 @@ class DefaultConfig:
 
         print('*************************************************')
 
+class All_Beauty_data_Config(DefaultConfig):
+    
+    # DATASET FEATURES CONFIG
+    setting_path = '.data/All_Beauty_data_'
+        
+    vocab_size = 5488
+    
+    r_max_len = 63
+
+    u_max_r = 5
+    i_max_r = 18
+
+    train_data_size = 4220
+    test_data_size = 524
+    val_data_size = 525
+
+    user_num = 991 + 2
+    item_num = 86 + 2
 
 class AMAZON_FASHION_data_Config(DefaultConfig):
     
@@ -143,12 +178,17 @@ class AMAZON_FASHION_data_Config(DefaultConfig):
     u_max_r = 7
     i_max_r = 295
 
+    u_bert_doc_size = 4807
+    i_bert_doc_size = 62653
+
     train_data_size = 2529
-    test_data_size = 315
-    val_data_size = 316
+    test_data_size = 316
+    val_data_size = 315
 
     user_num = 404 + 2
     item_num = 31 + 2
+
+    
 
 
 class Toys_and_Games_data_Config(DefaultConfig):
@@ -181,6 +221,9 @@ class Digital_Music_data_Config(DefaultConfig):
 
     u_max_r = 12
     i_max_r = 18
+
+    u_bert_doc_size = 6294
+    i_bert_doc_size = 8836
 
     train_data_size = 135740
     test_data_size = 16942

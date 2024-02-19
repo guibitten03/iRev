@@ -37,12 +37,12 @@ if __name__ == "__main__":
         yelp_data = True
         save_folder = '../dataset/' + filename[:-5] + "_data_" + sys.argv[4]
         zeroshot_path = filename[:-5] + "_zeroshot.npy"
-        finetunning_path = filename[:-5] + "_finetunning.npy"
+        # finetunning_path = filename[:-5] + "_finetunning.npy"
     else:
         # AMAZON DATASET
         save_folder = '../dataset/' + filename[:-7]+"_data_" + sys.argv[4]
         zeroshot_path = filename[:-7] + "_5_zeroshot.npy"
-        finetunning_path = filename[:-7] + "_5_finetunning.npy"
+        # finetunning_path = filename[:-7] + "_5_finetunning.npy"
 
     print(f"SAVE FOLDER： {save_folder}")
 
@@ -108,16 +108,13 @@ if __name__ == "__main__":
     zeroshot_sentences = np.load(f"../ZeroShot/{zeroshot_path}")
     zeroshot_sentences = np.array([zeroshot_sentences[i] for i in range(len(zeroshot_sentences)) if i not in unknown])
 
-    finetunning_sentences = np.load(f"../FineTunning/{finetunning_path}")
-    finetunning_sentences = np.array([finetunning_sentences[i] for i in range(len(finetunning_sentences)) if i not in unknown])
 
     # DATASET LOADED AND CREATED AS PANDAS DATAFRAME
     data_frame = {'user_id': pd.Series(users_id), 'item_id': pd.Series(items_id),
                   'ratings': pd.Series(ratings), 'reviews': pd.Series(reviews), 
-                  'zeroshot': pd.Series([zeroshot_sentences[i] for i in range(zeroshot_sentences.shape[0])]),
-                  'finetunning': pd.Series([finetunning_sentences[i] for i in range(finetunning_sentences.shape[0])])}
+                  'zeroshot': pd.Series([zeroshot_sentences[i] for i in range(zeroshot_sentences.shape[0])])}
     data = pd.DataFrame(data_frame)
-    del users_id, items_id, ratings, reviews, zeroshot_sentences, finetunning_sentences # CLEANNING MEMORY TRASH ;)
+    del users_id, items_id, ratings, reviews, zeroshot_sentences # CLEANNING MEMORY TRASH ;)
 
 
     # SOME INFORMATIONS
@@ -250,10 +247,8 @@ if __name__ == "__main__":
     user_len = defaultdict(int)
     item_len = defaultdict(int)
 
-    user_zero_dict = {}
-    item_zero_dict = {}
-    user_fine_dict = {}
-    item_fine_dict = {}
+    user_bert_dict = {}
+    item_bert_dict = {}
 
     for i in data_train.values:
         str_review = clean_str(str(i[3]).encode('ascii', 'ignore').decode('ascii'))
@@ -275,50 +270,29 @@ if __name__ == "__main__":
             item_reviews_dict[i[1]] = [str_review]
             item_uid_dict[i[1]] = [i[0]]
 
-        zero_review = i[4]
+        bert_review = i[4]
 
-        if i[0] in user_zero_dict:
-            user_zero_dict[i[0]].append(zero_review)
+        if i[0] in user_bert_dict:
+            user_bert_dict[i[0]].append(bert_review)
         else:
-            user_zero_dict[i[0]] = [zero_review]
+            user_bert_dict[i[0]] = [bert_review]
 
-        if i[1] in item_zero_dict:
-            item_zero_dict[i[1]].append(zero_review)
+        if i[1] in item_bert_dict:
+            item_bert_dict[i[1]].append(bert_review)
         else:
-            item_zero_dict[i[1]] = [zero_review]
-
-        fine_review = i[5]
-
-        if i[0] in user_fine_dict:
-            user_fine_dict[i[0]].append(fine_review)
-        else:
-            user_fine_dict[i[0]] = [fine_review]
-
-        if i[1] in item_fine_dict:
-            item_fine_dict[i[1]].append(fine_review)
-        else:
-            item_fine_dict[i[1]] = [fine_review]
+            item_bert_dict[i[1]] = [bert_review]
 
 
     # BUILDING USER/ITEM DOCUMENTS FROM REVIEWS
     vocab, user_review2doc, item_review2doc, user_reviews_dict, item_reviews_dict, topics = build_doc(user_reviews_dict, item_reviews_dict)
-    user_zero_dict, item_zero_dict, user_zero2doc, item_zero2doc = build_bert_doc(user_zero_dict, item_zero_dict)
-    user_fine_dict, item_fine_dict, user_fine2doc, item_fine2doc = build_bert_doc(user_fine_dict, item_fine_dict)
+    user_bert_dict, item_bert_dict, user_bert2doc, item_bert2doc = build_bert_doc(user_bert_dict, item_bert_dict)
 
     print("############################")
-    print("BERT Zeroshot Config:")
-    print(f"User Rev Shape: {np.array(user_zero_dict).shape}")
-    print(f"Item Rev Shape: {np.array(item_zero_dict).shape}")
-    print(f"User Doc Shape: {np.array(user_zero2doc).shape}")
-    print(f"Item Doc Shape: {np.array(item_zero2doc).shape}")
-    print("############################")
-
-    print("############################")
-    print("BERT Finetunning Config:")
-    print(f"User Rev Shape: {np.array(user_fine_dict).shape}")
-    print(f"Item Rev Shape: {np.array(item_fine_dict).shape}")
-    print(f"User Doc Shape: {np.array(user_fine2doc).shape}")
-    print(f"Item Doc Shape: {np.array(item_fine2doc).shape}")
+    print("BERT Config:")
+    print(f"User Rev Shape: {np.array(user_bert_dict).shape}")
+    print(f"Item Rev Shape: {np.array(item_bert_dict).shape}")
+    print(f"User Doc Shape: {np.array(user_bert2doc).shape}")
+    print(f"Item Doc Shape: {np.array(item_bert2doc).shape}")
     print("############################")
 
     word_index = {}
@@ -427,15 +401,10 @@ if __name__ == "__main__":
 
     print("-"*60)
     print(f"{now()} start writing npy...")
-    np.save(f"{save_folder}/train/userZeroReviews.npy", user_zero_dict)
-    np.save(f"{save_folder}/train/itemZeroReviews.npy", item_zero_dict)
-    np.save(f"{save_folder}/train/userZeroDoc.npy", user_zero2doc)
-    np.save(f"{save_folder}/train/itemZeroDoc.npy", item_zero2doc)
-
-    np.save(f"{save_folder}/train/userFineReviews.npy", user_fine_dict)
-    np.save(f"{save_folder}/train/itemFineReviews.npy", item_fine_dict)
-    np.save(f"{save_folder}/train/userFineDoc.npy", user_fine2doc)
-    np.save(f"{save_folder}/train/itemFineDoc.npy", item_fine2doc)
+    np.save(f"{save_folder}/train/userBertReviews.npy", user_bert_dict)
+    np.save(f"{save_folder}/train/itemBertReviews.npy", item_bert_dict)
+    np.save(f"{save_folder}/train/userBertDoc.npy", user_bert2doc)
+    np.save(f"{save_folder}/train/itemBertDoc.npy", item_bert2doc)
 
     np.save(f"{save_folder}/train/userReview2Index.npy", userReview2Index)
     np.save(f"{save_folder}/train/user_item2id.npy", user_iid_list)

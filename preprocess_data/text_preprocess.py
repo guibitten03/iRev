@@ -1,5 +1,6 @@
 import re
 import numpy as np
+import math
 
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
@@ -92,6 +93,64 @@ def build_doc(u_reviews_dict, i_reviews_dict):
     i_doc = clean_doc(i_reviews)
 
     return vocab, u_doc, i_doc, u_reviews_dict, i_reviews_dict, topics
+
+
+def build_bert_doc(u_bert_dict, i_bert_dict):
+    u_bert = []
+    u_rev_mean = 0.0
+    for ind in range(len(u_bert_dict)):
+        revs = u_bert_dict[ind]
+        u_rev_mean += len(revs)
+        doc = []
+        for d in revs:
+            doc.extend(d)
+
+        u_bert.append(doc)
+
+    i_bert = []
+    i_rev_mean = 0.0
+    for ind in range(len(i_bert_dict)):
+        revs = i_bert_dict[ind]
+        i_rev_mean += len(revs)
+        doc = []
+        for d in revs:
+            doc.extend(d)
+
+        i_bert.append(doc)
+    
+
+    def clean_rev(rev_dict, rev_size):
+        new_dict = []
+        for k, v in rev_dict.items():
+            if len(v) < rev_size:
+                v_pad = []
+                pad = rev_size - len(v)
+                for i in range(pad):
+                    padding = [0] * 768
+                    v_pad.append(padding)
+                v.extend(v_pad)
+            
+            new_dict.append(v[:rev_size])
+        
+        return new_dict
+        
+    def clean_doc(raw, doc_len):
+        new_raw = []
+        for line in raw:
+            if len(line) < doc_len:
+                line = np.pad(line, (doc_len - len(line)), "constant")
+            if len(line) > doc_len:
+                line = line[:doc_len]
+            new_raw.append(line)
+        return new_raw
+    
+    u_dict = clean_rev(u_bert_dict, math.floor((u_rev_mean / len(u_bert_dict))))
+    i_dict = clean_rev(i_bert_dict, math.floor((i_rev_mean / len(i_bert_dict))))
+    
+    u_doc = clean_doc(u_bert, math.floor((u_rev_mean / len(u_bert_dict)) * 768))
+    i_doc = clean_doc(i_bert, math.floor((i_rev_mean / len(i_bert_dict)) * 768))
+
+    return u_dict, i_dict, u_doc, i_doc
 
 
 # @DESCRIBE DATASET FOR CONFIGURATION
