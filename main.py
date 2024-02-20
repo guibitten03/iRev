@@ -48,8 +48,11 @@ def train(**kwargs):
     if 'model' not in kwargs:
         raise Exception("Model not provided.")
     
-    if opt.bert:
-        opt.model = f"{opt.model}BERT"
+    if opt.bert == "zeroshot":
+        opt.model = f"{opt.model}_ZeroShot"
+        model = Model(opt, getattr(models, opt.model))
+    elif opt.bert == "finetunning":
+        opt.model = f"{opt.model}_FineTunning"
         model = Model(opt, getattr(models, opt.model))
     else:
         model = Model(opt, getattr(models, opt.model))
@@ -207,8 +210,10 @@ def test(**kwargs):
         opt = getattr(config, kwargs['dataset'] + '_Config')()
     opt.parse(kwargs)
 
-    if opt.bert:
-        opt.model = f"{opt.model}BERT"
+    if opt.bert == "zeroshot":
+        opt.model = f"{opt.model}_ZeroShot"
+    elif opt.bert == "finetunning":
+        opt.model = f"{opt.model}_FineTunning"
 
     opt.pth_path = f"checkpoints/{opt.model}_{opt.dataset}_{opt.emb_opt}.pth"
 

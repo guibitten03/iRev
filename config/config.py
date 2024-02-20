@@ -76,7 +76,7 @@ class DefaultConfig:
     transnet = False
 
     # BERT EMBEDDING
-    bert = False
+    bert = ""
 
 
     def set_path(self, name):
@@ -95,11 +95,17 @@ class DefaultConfig:
         self.user_doc_path = f'{prefix}/userDoc2Index.npy'
         self.item_doc_path = f'{prefix}/itemDoc2Index.npy'
 
-        self.user_bert_doc_path = f"{prefix}/userBertDoc.npy"
-        self.item_bert_doc_path = f"{prefix}/itemBertDoc.npy"
+        self.user_zero_doc_path = f"{prefix}/userZeroDoc.npy"
+        self.item_zero_doc_path = f"{prefix}/itemZeroDoc.npy"
 
-        self.user_review_bert_path = f"{prefix}/userBertReviews.npy"
-        self.item_review_bert_path = f"{prefix}/itemBertReviews.npy"
+        self.user_review_zero_path = f"{prefix}/userZeroReviews.npy"
+        self.item_review_zero_path = f"{prefix}/itemZeroReviews.npy"
+
+        self.user_fine_doc_path = f"{prefix}/userFineDoc.npy"
+        self.item_fine_doc_path = f"{prefix}/itemFineDoc.npy"
+
+        self.user_review_fine_path = f"{prefix}/userFineReviews.npy"
+        self.item_review_fine_path = f"{prefix}/itemFineReviews.npy"
 
         self.ratingMatrix_path = f"{prefix}/Rating_Matrix.npy"
 
@@ -121,11 +127,18 @@ class DefaultConfig:
         # LOAD DATASET FEATURES
         print("load npy from dist...")
 
-        if self.bert:
-            self.user_doc = np.load(self.user_bert_doc_path, encoding='bytes')
-            self.item_doc = np.load(self.item_bert_doc_path, encoding='bytes')
-            self.users_review_list = np.load(self.user_review_bert_path, encoding='bytes')
-            self.items_review_list = np.load(self.item_review_bert_path, encoding='bytes')
+        if self.bert == "zeroshot":
+            self.user_doc = np.load(self.user_zero_doc_path, encoding='bytes')
+            self.item_doc = np.load(self.item_zero_doc_path, encoding='bytes')
+            self.users_review_list = np.load(self.user_review_zero_path, encoding='bytes')
+            self.items_review_list = np.load(self.item_review_zero_path, encoding='bytes')
+
+        elif self.bert == "finetunning":
+            self.user_doc = np.load(self.user_fine_doc_path, encoding='bytes')
+            self.item_doc = np.load(self.item_fine_doc_path, encoding='bytes')
+            self.users_review_list = np.load(self.user_review_fine_path, encoding='bytes')
+            self.items_review_list = np.load(self.item_review_fine_path, encoding='bytes')
+
         else:
             self.users_review_list = np.load(self.user_list_path, encoding='bytes')
             self.items_review_list = np.load(self.item_list_path, encoding='bytes')

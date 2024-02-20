@@ -95,15 +95,16 @@ def build_doc(u_reviews_dict, i_reviews_dict):
     return vocab, u_doc, i_doc, u_reviews_dict, i_reviews_dict, topics
 
 
-def build_bert_doc(u_bert_dict, i_bert_dict):
+def build_bert_doc(u_bert_dict, i_bert_dict, u_len, i_len):
     u_bert = []
     u_rev_mean = 0.0
+
     for ind in range(len(u_bert_dict)):
         revs = u_bert_dict[ind]
         u_rev_mean += len(revs)
         doc = []
         for d in revs:
-            doc.extend(d)
+            doc.append(d)
 
         u_bert.append(doc)
 
@@ -114,7 +115,7 @@ def build_bert_doc(u_bert_dict, i_bert_dict):
         i_rev_mean += len(revs)
         doc = []
         for d in revs:
-            doc.extend(d)
+            doc.append(d)
 
         i_bert.append(doc)
     
@@ -134,21 +135,27 @@ def build_bert_doc(u_bert_dict, i_bert_dict):
         
         return new_dict
         
-    def clean_doc(raw, doc_len):
-        new_raw = []
-        for line in raw:
-            if len(line) < doc_len:
-                line = np.pad(line, (doc_len - len(line)), "constant")
-            if len(line) > doc_len:
-                line = line[:doc_len]
-            new_raw.append(line)
-        return new_raw
+    def clean_doc(users_doc, doc_len):
+        new_users_doc = []
+        for doc in users_doc: # Doc = (n reviews, 768)
+            if len(doc) < doc_len:
+                vector_pad = []
+                pad = doc_len - len(doc)
+                for i in range(pad):
+                    padding = [0] * 768
+                    vector_pad.append(padding)
+                doc.extend(vector_pad)
+            if len(doc) > doc_len:
+                doc = doc[:doc_len]
+                
+            new_users_doc.append(doc)
+        return new_users_doc
     
-    u_dict = clean_rev(u_bert_dict, math.floor((u_rev_mean / len(u_bert_dict))))
-    i_dict = clean_rev(i_bert_dict, math.floor((i_rev_mean / len(i_bert_dict))))
+    u_dict = clean_rev(u_bert_dict, u_len)
+    i_dict = clean_rev(i_bert_dict, i_len)
     
-    u_doc = clean_doc(u_bert, math.floor((u_rev_mean / len(u_bert_dict)) * 768))
-    i_doc = clean_doc(i_bert, math.floor((i_rev_mean / len(i_bert_dict)) * 768))
+    u_doc = clean_doc(u_bert, u_len)
+    i_doc = clean_doc(i_bert, i_len)
 
     return u_dict, i_dict, u_doc, i_doc
 

@@ -17,7 +17,10 @@ from .tarmf import TARMF
 from .carm import CARM
 from .nrpa import NRPA
 from .pmf import ProbabilisticMatrixFatorization
-from .deepconnbert import DeepCoNNBERT
+from .deepconn_ZeroShot import DeepCoNN_ZeroShot
+from .deepconn_FineTunning import DeepCoNN_FineTunning
+from .narre_ZeroShot import NARRE_ZeroShot
+from .narre_FineTunning import NARRE_FineTunning
 
 # NRPA
 # ARTAN
@@ -44,4 +47,9 @@ __all__ = [
     "CARM",
     "NRPA",
     "ProbabilisticMatrixFatorization",
+    # BERT REPRESENTATIONS
+    "DeepCoNN_ZeroShot",
+    "DeepCoNN_FineTunning",
+    "NARRE_ZeroShot",
+    "NARRE_FineTunning",
 ]

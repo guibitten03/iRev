@@ -302,24 +302,7 @@ if __name__ == "__main__":
 
     # BUILDING USER/ITEM DOCUMENTS FROM REVIEWS
     vocab, user_review2doc, item_review2doc, user_reviews_dict, item_reviews_dict, topics = build_doc(user_reviews_dict, item_reviews_dict)
-    user_zero_dict, item_zero_dict, user_zero2doc, item_zero2doc = build_bert_doc(user_zero_dict, item_zero_dict)
-    user_fine_dict, item_fine_dict, user_fine2doc, item_fine2doc = build_bert_doc(user_fine_dict, item_fine_dict)
-
-    print("############################")
-    print("BERT Zeroshot Config:")
-    print(f"User Rev Shape: {np.array(user_zero_dict).shape}")
-    print(f"Item Rev Shape: {np.array(item_zero_dict).shape}")
-    print(f"User Doc Shape: {np.array(user_zero2doc).shape}")
-    print(f"Item Doc Shape: {np.array(item_zero2doc).shape}")
-    print("############################")
-
-    print("############################")
-    print("BERT Finetunning Config:")
-    print(f"User Rev Shape: {np.array(user_fine_dict).shape}")
-    print(f"Item Rev Shape: {np.array(item_fine_dict).shape}")
-    print(f"User Doc Shape: {np.array(user_fine2doc).shape}")
-    print(f"Item Doc Shape: {np.array(item_fine2doc).shape}")
-    print("############################")
+    
 
     word_index = {}
     word_index['<unk>'] = 0
@@ -349,6 +332,25 @@ if __name__ == "__main__":
 
     maxSentLen = max(u_pSentLen, i_pSentLen)
     minSentlen = 1
+
+    user_zero_dict, item_zero_dict, user_zero2doc, item_zero2doc = build_bert_doc(user_zero_dict, item_zero_dict, u_pReviewLen, i_pReviewLen)
+    user_fine_dict, item_fine_dict, user_fine2doc, item_fine2doc = build_bert_doc(user_fine_dict, item_fine_dict, u_pReviewLen, i_pReviewLen)
+
+    print("############################")
+    print("BERT Zeroshot Config:")
+    print(f"User Rev Shape: {np.array(user_zero_dict).shape}")
+    print(f"Item Rev Shape: {np.array(item_zero_dict).shape}")
+    print(f"User Doc Shape: {np.array(user_zero2doc).shape}")
+    print(f"Item Doc Shape: {np.array(item_zero2doc).shape}")
+    print("############################")
+
+    print("############################")
+    print("BERT Finetunning Config:")
+    print(f"User Rev Shape: {np.array(user_fine_dict).shape}")
+    print(f"Item Rev Shape: {np.array(item_fine_dict).shape}")
+    print(f"User Doc Shape: {np.array(user_fine2doc).shape}")
+    print(f"Item Doc Shape: {np.array(item_fine2doc).shape}")
+    print("############################")
 
     print(f"-"*60)
     print(f"{now()} Step4: padding all the text and id lists and save into npy.")
