@@ -424,7 +424,7 @@ def unpack_input(opt, x):
         item_doc = opt.topic_matrix[[x + shift for x in iids]] 
 
     
-    if opt.bert:
+    if opt.bert == "finetunning" or opt.bert == "zeroshot":
         data = [torch.FloatTensor(user_reviews).cuda(), 
                 torch.FloatTensor(item_reviews).cuda(),
                 torch.LongTensor(uids).cuda(), 

@@ -59,6 +59,8 @@ class MPCN(nn.Module):
         i_word_embs = self.item_word_embs(item_reviews)
         u_reviews = self.review_gate(u_word_embs)
         i_reviews = self.review_gate(i_word_embs)
+
+
         u_fea = []
         i_fea = []
         for i in range(self.head):

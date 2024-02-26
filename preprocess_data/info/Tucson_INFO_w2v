@@ -1,6 +1,6 @@
 SAVE FOLDER： ../dataset/.data/Tucso_data_word2vec
 Warning: the word embedding file is not provided, will be initialized randomly
-2024-01-12 21:57:12: Step1: loading raw review datasets...
+2024-02-20 23:49:09: Step1: loading raw review datasets...
 ===============Start:all  rawData size======================
 dataNum: 404880
 userNum: 121312
@@ -8,7 +8,7 @@ itemNum: 9250
 data densiy: 0.0004
 ===============End: rawData size========================
 ------------------------------------------------------------
-2024-01-12 21:57:13 Step2: split datsets into train/val/test, save into npy data
+2024-02-20 23:56:45 Step2: split datsets into train/val/test, save into npy data
 ===============Start: no-preprocess: trainData size======================
 dataNum: 323904
 userNum: 106226
@@ -19,32 +19,19 @@ dataNum: 339986
 userNum (config): 121312
 itemNum (config): 9250
 ===============End-process finished: trainData size========================
-2024-01-12 21:57:17
+2024-02-20 23:56:49
 Train data size (config): 339986
 Val data size (config): 32447
 Test data size (config): 32447
 ------------------------------------------------------------
-2024-01-12 21:57:17 Step3: Construct the vocab and user/item reviews from training set.
+2024-02-20 23:56:49 Step3: Construct the vocab and user/item reviews from training set.
 LDA transform matrix: (130562, 32)
 The vocab size: 50002
 Average user document length: 112.23836059087311
 Average item document length: 433.70086486486485
-2024-01-12 22:03:33
+2024-02-21 00:02:54
 u_max_r:3
 i_max_r:56
 r_max_len：93
-------------------------------------------------------------
-2024-01-12 22:03:34 Step4: padding all the text and id lists and save into npy.
-user document length: 500
-item document length: 500
-------------------------------------------------------------
-2024-01-12 22:03:43 start writing npy...
-2024-01-12 22:03:47 write finised
-------------------------------------------------------------
-2024-01-12 22:03:47 Step5: start word embedding mapping...
 ############################
-out of vocab: 11059
-w2v size: 50002
-############################
-Vocab Size and Word Dim: (50002, 300)
-2024-01-12 22:04:00 all steps finised, cost time: 407.5674s
+BERT Zeroshot Config:

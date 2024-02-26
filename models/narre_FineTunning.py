@@ -38,7 +38,6 @@ class Net(nn.Module):
             ui_id_num = self.opt.user_num
 
         self.id_embedding = nn.Embedding(id_num, self.opt.id_emb_size)  # user/item num * 32
-        self.word_embs = nn.Embedding(self.opt.vocab_size, self.opt.word_dim)  # vocab_size * 300
         self.u_i_id_embedding = nn.Embedding(ui_id_num, self.opt.id_emb_size)
 
         self.review_linear = nn.Linear(self.opt.filters_num, self.opt.id_emb_size)
@@ -91,13 +90,6 @@ class Net(nn.Module):
 
         nn.init.uniform_(self.fc_layer.weight, -0.1, 0.1)
         nn.init.constant_(self.fc_layer.bias, 0.1)
-        if self.opt.use_word_embedding:
-            w2v = torch.from_numpy(np.load(self.opt.w2v_path))
-            if self.opt.use_gpu:
-                self.word_embs.weight.data.copy_(w2v.cuda())
-            else:
-                self.word_embs.weight.data.copy_(w2v)
-        else:
-            nn.init.xavier_normal_(self.word_embs.weight)
+        
         nn.init.uniform_(self.id_embedding.weight, a=-0.1, b=0.1)
         nn.init.uniform_(self.u_i_id_embedding.weight, a=-0.1, b=0.1)

@@ -36,8 +36,8 @@ if __name__ == "__main__":
         # YELP DATASET
         yelp_data = True
         save_folder = '../dataset/' + filename[:-5] + "_data_" + sys.argv[4]
-        zeroshot_path = filename[:-5] + "_zeroshot.npy"
-        finetunning_path = filename[:-5] + "_finetunning.npy"
+        zeroshot_path = filename[:-4] + "_zeroshot.npy"
+        finetunning_path = filename[:-4] + "_finetunning.npy"
     else:
         # AMAZON DATASET
         save_folder = '../dataset/' + filename[:-7]+"_data_" + sys.argv[4]

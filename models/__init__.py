@@ -21,6 +21,15 @@ from .deepconn_ZeroShot import DeepCoNN_ZeroShot
 from .deepconn_FineTunning import DeepCoNN_FineTunning
 from .narre_ZeroShot import NARRE_ZeroShot
 from .narre_FineTunning import NARRE_FineTunning
+from .mpcn_ZeroShot import MPCN_ZeroShot
+
+from .convmf_ZeroShot import ConvMF_ZeroShot
+from .convmf_FineTunning import ConvMF_FineTunning
+from .daml_ZeroShot import DAML_ZeroShot
+from .daml_FineTunning import DAML_FineTunning
+from .tarmf_ZeroShot import TARMF_ZeroShot
+from .tarmf_FineTunning import TARMF_FineTunning
+from .hrdr_ZeroShot import HRDR_ZeroShot
 
 # NRPA
 # ARTAN
@@ -52,4 +61,12 @@ __all__ = [
     "DeepCoNN_FineTunning",
     "NARRE_ZeroShot",
     "NARRE_FineTunning",
+    "MPCN_ZeroShot",
+
+    "ConvMF_ZeroShot",
+    "ConvMF_FineTunning",
+    "DAML_ZeroShot",
+    "DAML_FineTunning",
+    "TARMF_ZeroShot",
+    "TARMF_FineTunning"
 ]
