@@ -1,6 +1,6 @@
 SAVE FOLDER： ../dataset/.data/AMAZON_FASHION_data_word2vec
 Warning: the word embedding file is not provided, will be initialized randomly
-2024-02-20 12:32:18: Step1: loading raw review datasets...
+2024-03-08 17:54:59: Step1: loading raw review datasets...
 ===============Start:all  rawData size======================
 dataNum: 3160
 userNum: 404
@@ -8,28 +8,28 @@ itemNum: 31
 data densiy: 0.2523
 ===============End: rawData size========================
 ------------------------------------------------------------
-2024-02-20 12:32:18 Step2: split datsets into train/val/test, save into npy data
+2024-03-08 17:54:59 Step2: split datsets into train/val/test, save into npy data
 ===============Start: no-preprocess: trainData size======================
 dataNum: 2528
 userNum: 404
 itemNum: 30
 ===============End: no-preprocess: trainData size========================
 ===============Start--process finished: trainData size======================
-dataNum (config): 2529
+dataNum: 2529
 userNum (config): 404
 itemNum (config): 31
 ===============End-process finished: trainData size========================
-2024-02-20 12:32:30
+2024-03-08 17:55:12
 Train data size (config): 2529
 Val data size (config): 316
 Test data size (config): 315
 ------------------------------------------------------------
-2024-02-20 12:32:30 Step3: Construct the vocab and user/item reviews from training set.
+2024-03-08 17:55:12 Step3: Construct the vocab and user/item reviews from training set.
 LDA transform matrix: (435, 32)
 The vocab size: 1451
 Average user document length: 130.20049504950495
 Average item document length: 196.80645161290323
-2024-02-20 12:32:31
+2024-03-08 17:55:12
 u_max_r:7
 i_max_r:295
 r_max_len：42
@@ -48,17 +48,17 @@ User Doc Shape: (404, 7, 768)
 Item Doc Shape: (31, 295, 768)
 ############################
 ------------------------------------------------------------
-2024-02-20 12:32:32 Step4: padding all the text and id lists and save into npy.
+2024-03-08 17:55:13 Step4: padding all the text and id lists and save into npy.
 user document length: 500
 item document length: 500
 ------------------------------------------------------------
-2024-02-20 12:32:32 start writing npy...
-2024-02-20 12:32:33 write finised
+2024-03-08 17:55:14 start writing npy...
+2024-03-08 17:55:14 write finised
 ------------------------------------------------------------
-2024-02-20 12:32:33 Step5: start word embedding mapping...
+2024-03-08 17:55:14 Step5: start word embedding mapping...
 ############################
 out of vocab: 57
 w2v size: 1451
 ############################
 Vocab Size and Word Dim: (1451, 300)
-2024-02-20 12:32:44 all steps finised, cost time: 26.4012s
+2024-03-08 17:55:27 all steps finised, cost time: 27.1583s

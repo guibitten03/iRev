@@ -26,6 +26,9 @@ from metrics.diversity import diversity
 # @TRAIN FUNCTION 
 def train(**kwargs):
 
+    # kwargs = {"argumento": "value"}
+    # kwargs = [(arg, value), (arg2, value2)...]
+
     # DATASET LOADING
     if 'dataset' not in kwargs:
         raise Exception("Dataset not provided.")
@@ -400,7 +403,7 @@ def predict(model, data_loader, opt):
     return total_loss, mse, mae
 
 
-# @UNPACK INTERACTIN FEATURES
+# @UNPACK INTERACTION FEATURES
 def unpack_input(opt, x):
 
     uids, iids = list(zip(*x))

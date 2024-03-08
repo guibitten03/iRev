@@ -117,6 +117,7 @@ if __name__ == "__main__":
                   'zeroshot': pd.Series([zeroshot_sentences[i] for i in range(zeroshot_sentences.shape[0])]),
                   'finetunning': pd.Series([finetunning_sentences[i] for i in range(finetunning_sentences.shape[0])])}
     data = pd.DataFrame(data_frame)
+    
     del users_id, items_id, ratings, reviews, zeroshot_sentences, finetunning_sentences # CLEANNING MEMORY TRASH ;)
 
 
