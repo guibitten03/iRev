@@ -1,12 +1,21 @@
 import math
 
-def diversity(true, pred):
+def diversity(itens, pred_cat):
     entropy = []
 
-    mean = sum(pred) / len(pred)
+    for item, cat in zip(itens, pred_cat):
+        for alt, cat_alt in zip(itens, pred_cat):
+            if item == alt: continue
+            if cat == cat_alt:
+                entropy.append(1)
+            else:
+                entropy.append(0)
 
-    for t in true:
-        prob = abs(t - mean)
-        entropy.append(abs(-prob * math.log2(prob)))
+    entropy_sum = sum(entropy)
 
-    return 1 - (sum(entropy) / len(entropy))
+    if entropy_sum == 0:
+        return 1
+    
+    entropy = math.log2(sum(entropy))
+
+    return 1 - (entropy / len(itens))
