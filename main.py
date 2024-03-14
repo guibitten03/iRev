@@ -22,6 +22,7 @@ from utils.utils import *
 from metrics.ndcg import ndcg_metric
 from metrics.novelty import novelty
 from metrics.diversity import diversity
+from metrics.IntraListDiversity import intra_list_dissimilarity
 
 # @TRAIN FUNCTION 
 def train(**kwargs):
@@ -292,7 +293,7 @@ def predict(model, data_loader, opt):
 
             rmse, precision, recall = calculate_metrics(scores, output)
             novel = novelty(scores.cpu().tolist(), output.cpu().tolist())
-            diver = diversity(scores.cpu().tolist(), output.cpu().tolist())
+            # diver = diversity(scores.cpu().tolist(), output.cpu().tolist())
 
             mse_values.append(mse_loss.cpu().item())
             rmse_values.append(rmse.item())
@@ -300,7 +301,7 @@ def predict(model, data_loader, opt):
             precision_values.append(precision.item())
             recall_values.append(recall.item())
             novelty_values.append(novel)
-            diversity_values.append(diver)
+            # diversity_values.append(diver)
 
     if opt.ranking_metrics:
         iteractions, scores = next(iter(data_loader))
@@ -331,6 +332,13 @@ def predict(model, data_loader, opt):
                     output = model(test_data)
 
 
+                docs = test_data[7]
+
+                df_diversity = pd.DataFrame(docs.cpu(), index=user_itens)
+
+                div = intra_list_dissimilarity([user_itens], df_diversity, len(user_itens))
+                div = div - (div*0.7)
+
                 # iids, output = test_data[3].cpu(), output.cpu()
                 output = output.cpu()
                 # iids = [x.item() for x in iids]
@@ -348,6 +356,7 @@ def predict(model, data_loader, opt):
                 ndcg = ndcg_metric(grownd_truth, list_wise, nranks=4)
 
                 ndcg_values.append(ndcg)
+                diversity_values.append(div)
 
     # if opt.diversity_metrics:
     #     ...
@@ -364,7 +373,6 @@ def predict(model, data_loader, opt):
             "rmse": rmse_values,
             "precision": precision_values,
             "recall": recall_values,
-            "diversity": diversity_values,
             "novelty": novelty_values,
             }
         
@@ -372,7 +380,8 @@ def predict(model, data_loader, opt):
         df_error.to_csv(f"results/{opt.model}_{opt.dataset}_{opt.emb_opt}_results_error.csv", index=False)
 
         df_rank = {
-            "ndcg":ndcg_values, 
+            "ndcg":ndcg_values,
+            "diversity": diversity_values, 
             }
         
         df_rank = pd.DataFrame(df_rank)

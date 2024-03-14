@@ -1,7 +1,8 @@
-for dataset in Digital_Music_data Musical_Instruments_data Office_Products_data Tamp_data Tucso_data Philladelphi_data 
+# for dataset in Digital_Music_data Musical_Instruments_data Office_Products_data Tamp_data Tucso_data Philladelphi_data
+for dataset in Tamp_data Tucso_data
 do
 
-    # python3 main.py train --model=DeepCoNN --dataset=$dataset --emb_opt=word2vec --num-fea=1 
+    python3 main.py train --model=DeepCoNN --dataset=$dataset --emb_opt=word2vec --num-fea=1 
 
     # python3 main.py train --model=NARRE --dataset=$dataset --emb_opt=word2vec --num-fea=2 
 
