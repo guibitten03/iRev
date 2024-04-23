@@ -37,18 +37,15 @@ class CARL(nn.Module):
         uids_emb = self.u_emb(uids)
         iids_emb = self.i_emb(iids)
 
-        # --- Review Based Feature Learning --- #
         user_fea = F.relu(self.user_cnn(user_fea.unsqueeze(1)).squeeze(3))
         item_fea = F.relu(self.item_cnn(item_fea.unsqueeze(1)).squeeze(3))
 
-        # --- Attentive Layer --- #
         relation_matrix = torch.matmul(user_fea.transpose(1,2), self.att_matrix)
         relation_matrix = F.tanh(torch.matmul(relation_matrix, item_fea))
 
         user_att = F.softmax(torch.mean(relation_matrix, 1), dim=1).unsqueeze(1)
         item_att = F.softmax(torch.mean(relation_matrix, 2), dim=1).unsqueeze(1)
 
-        # --- Abstracting Layer  --- #
         user_fea = user_fea * user_att
         item_fea = item_fea * item_att
 
