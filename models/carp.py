@@ -42,20 +42,12 @@ class CARP(nn.Module):
         u_fea = F.pad(user_doc, (0, 0, pad_size, pad_size), 'constant', 0)
         i_fea = F.pad(item_doc, (0, 0, pad_size, pad_size), 'constant', 0)
 
-        '''
-            Context Encoding
-            Eq 1
-        '''
         u_viewpoints = self.user_viewpoint(u_fea, user_ids)
         i_viewpoints = self.item_viewpoint(i_fea, item_ids)
         
         # u_fea = F.relu(self.user_cnn(u_fea.unsqueeze(1))).squeeze(3)  # o_shape (bs, filters, doc_len) 
         # i_fea = F.relu(self.item_cnn(i_fea.unsqueeze(1))).squeeze(3)  # 
 
-        '''
-            Self Attention and Intra Attention
-            Eq 1 - 2
-        '''
         u_att = torch.mean(u_viewpoints, dim=1)
         i_att = torch.mean(i_viewpoints, dim=1)
         u_att = F.softmax(u_viewpoints * u_att.unsqueeze(1), dim=1)
@@ -64,11 +56,6 @@ class CARP(nn.Module):
         u_fea = torch.sum(u_viewpoints * u_att, 1)
         i_fea = torch.sum(i_viewpoints * i_att, 1)
 
-        '''
-            Logic Unit Representation 
-            Sentiment Capsule
-            Eq 3 - 6
-        '''
         gated_unit = torch.cat([(u_fea - i_fea), (u_fea * i_fea)], dim=1)
 
         gated_unit = self.logic_unit(gated_unit)
