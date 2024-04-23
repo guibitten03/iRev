@@ -34,17 +34,11 @@ class Net(nn.Module):
             id_num = self.opt.user_num
             ui_id_num = self.opt.item_num
 
-        '''
-            Construct a matrix user_num x item_num of ids embeddings
-        '''
         self.id_embedding = nn.Embedding(ui_id_num, opt.id_emb_size)
         # self.rating_matrix = nn.Embedding(opt.user_num, opt.item_num)  # user/item num * 32
         # self.rating_matrix.weight.requires_grad = False
         self.word_embs = nn.Embedding(self.opt.vocab_size, self.opt.word_dim)  # vocab_size * 300
 
-        '''
-            Eq 1
-        '''
         self.rating_mlp = nn.Sequential(
             # nn.Linear(id_num, id_num // 2),
             nn.Linear(opt.id_emb_size, id_num // 2),
@@ -59,7 +53,6 @@ class Net(nn.Module):
 
         self.id_linear = nn.Linear(self.opt.filters_num, self.opt.filters_num)
         self.review_linear = nn.Linear(self.opt.filters_num, self.opt.id_emb_size)
-
 
         self.dropout = nn.Dropout(self.opt.drop_out)
 
@@ -76,10 +69,7 @@ class Net(nn.Module):
         reviews = self.dropout(reviews)
         bs, r_num, r_len, wd = reviews.size()
         reviews = reviews.view(-1, r_len, wd)
-        
-        '''
-            Get respective id embedding: No grad.
-        '''
+    
         # rating_matrix = torch.from_numpy(np.load(self.opt.ratingMatrix_path))
 
         user_features = torch.Tensor(np.load(f"checkpoints/user_features_pmf_{self.opt.dataset}_{self.opt.emb_opt}.npy"))
@@ -99,15 +89,8 @@ class Net(nn.Module):
         # else:
         #     matrix_vector = (self.rating_matrix.weight[:, ids]).t()
 
-
-        '''
-            Eq: 1
-        '''
         Matrix_vector = self.rating_mlp(matrix_vector)
         
-        '''
-            Eq: 2, 3, 4
-        '''
         review_fea = F.relu(self.cnn(reviews.unsqueeze(1))).squeeze(3) 
         review_fea = F.max_pool1d(review_fea, review_fea.size(2)).squeeze(2)
         review_fea = review_fea.view(-1, r_num, review_fea.size(1)) # o = (128, 7, 100)
