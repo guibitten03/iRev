@@ -14,15 +14,12 @@ class MAN(nn.Module):
         self.num_fea = 1 # DOC
         
 
-        # Use Word2Vec - Mudar para opt.vocab_len
         self.user_review_emb = nn.Embedding(opt.vocab_size, opt.word_dim)
         self.item_review_emb = nn.Embedding(opt.vocab_size, opt.word_dim)
 
         # Convolution Kernal shape: (T, word_dim) - padding=same
         # Slices - [2,3,4]
         # Convolution is done by reviews of user to various itens
-        # Vou pegar cada review que meu usuário deu pra cada item 
-        # E aplicar a convolução pra cada item
         self.user_conv = TemporalConvolutionNetwork(opt)
         self.item_conv = TemporalConvolutionNetwork(opt, uori='item')
 
@@ -53,10 +50,6 @@ class MAN(nn.Module):
         user_tcn = self.user_conv(user_reviews.unsqueeze(1))
         item_tcn = self.item_conv(item_reviews.unsqueeze(1))
 
-        '''
-            MultiRepresentationAttention
-            Eq 4 - 8
-        '''
         euclidean = (user_tcn - item_tcn.permute(0, 1, 3, 2)).pow(2).sum(1).sqrt()
         attention_matrix = 1.0 / (1 + euclidean)
         attention_matrix = torch.softmax(torch.sum(attention_matrix, 2), dim=1)
@@ -67,30 +60,15 @@ class MAN(nn.Module):
         u_review_level = F.pad(u_review_level, (0, 0, pad, pad), 'constant', 0)
         i_review_level = F.pad(i_review_level, (0, 0, pad, pad), 'constant', 0)
 
-        '''
-            InteractionFeatureLearning
-            Eq 9 - 13
-        '''
         ui_features = self.ifl(u_review_level.unsqueeze(1), i_review_level.unsqueeze(1)) # (128, 300)
 
-        '''
-            UI ID Embeddings
-            Eq 14 - 16
-        '''
         u_emb = self.uid_embedding(uids)
         i_emb = self.iid_embedding(iids)
         pred_hidden_fea = torch.cat([ui_features, u_emb, i_emb], dim=1)
 
-
-        # '''
-        #     Auxiliar Network
-        #     Eq 18, 19
-        # '''
         # ui_fea = torch.cat([user_doc, item_doc], dim=1) # (128, 1000)
         # ui_fea = self.auxiliar(ui_fea)
 
-
-        # return u_att
         return pred_hidden_fea, None
 
     def reset_para(self):
