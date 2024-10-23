@@ -20,6 +20,20 @@ iRev categorizes Review-Aware Recommender Systems (RARS) into three main approac
 2. **Sentence Modeling**: Focuses on identifying key words and sentences to form a structured representation of users and items.
 3. **Rating Aggregation**: Associates numerical ratings with respective comments, similar to traditional recommendation systems using collaborative filtering.
 
+**Sentiment Extraction**: Articles that apply sentiment analysis techniques to extract information from user comments.
+**Aspect Extraction**: Articles that propose methods for identifying latent or implicit aspects within textual comments.
+
+**Prediction Systems**: Focus on predicting user preferences or ratings.
+**Explanation Systems**: Aim to explain recommendations based on user comments.
+**Hybrid Systems**: Combine both prediction and explanation approaches.
+
+**Non-Neural Architectures**: Utilize traditional learning techniques for recommendation, including methods like matrix factorization, clustering algorithms, and graph-based approaches.
+**Neural Architectures**: Employ artificial neural network-based methods, such as convolutional techniques, attention mechanisms, recurrent networks, and graph neural networks.
+
+**Content-Based**: Recommendations based on the attributes of items.
+**Collaborative Filters**: Recommendations based on user interactions and similarities.
+**Hybrid**: Combines both content-based and collaborative filtering strategies.
+
 ------
 
 ## 1. Installation:
