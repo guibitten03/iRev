@@ -1,6 +1,6 @@
 # Review-Aware Recommender Framework
 
-This repository contains a framework for creating review-aware recommender systems. The framework provides configurable modules to build recommendation algorithms that leverage user review data to enhance recommendations.
+The iRev contains a framework for creating review-aware recommender systems. The framework provides configurable modules to build recommendation algorithms that leverage user review data to enhance recommendations.
 
 ## Repository Structure
 
@@ -20,3 +20,13 @@ This repository contains a framework for creating review-aware recommender syste
    ```bash
    git clone https://github.com/your-username/repository-name.git
    cd repository-name
+
+------
+# Review Aware Recommender Systems Taxonomy:
+
+Our analyses identified three distinct categories represented in Figure 3, consisting of:  
+(1) **Document Modeling**: works that concatenate all user comments, including on items, into a single document;  
+(2) **Sentence Modeling**: works that propose mechanisms for recognizing key words in sentences and, subsequently, key sentences, to compose the representation of users and items; and  
+(3) **Rating Aggregation**: works that seek to associate the numerical evaluations of users/items with their respective comments, similar to traditional recommendation systems that rely on collaborative filtering.  
+
+![Alternative Text](path/to/image.png)
