@@ -36,15 +36,34 @@ iRev categorizes Review-Aware Recommender Systems (RARS) into three main approac
    pip install -r requirements.txt
 
 3. Preprocessing:
+   Modify ssh to point to your preferred database.
 
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows, use: venv\Scripts\activate
-   pip install -r requirements.txt
+   cd preprocess_data
+   bash preprocess.sh
 
-4. Training:
+5. Training:
+   Put the name of the databases that were pre-processed in the bash file.
+   Choose the models to train.
+   Choose hyper parameters.
 
-5. Testing:
+   ```bash
+   bash train.sh
 
-6. Expand this framework:
+7. Testing:
+   Put the name of the databases that were pre-processed in the bash file.
+   Choose the models trained.
+   Choose hyper parameters.
 
+   ```bash
+   bash test.sh
+
+8. Analyse results:
+
+   A csv file will be generated with the results of all metrics in the results folder. Just load it with pandas and analyze the results.
+
+--------
+
+All mapped and categorized algorithms can be checked in the following google sheets:
+
+https://docs.google.com/spreadsheets/d/1WAp7J67QqoRB2wdJCdTTi3SGcYmafY6krVI2cw9sydw/edit?gid=0#gid=0
