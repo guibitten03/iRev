@@ -20,9 +20,9 @@ class ANR(nn.Module):
 
         self.arl = AspectRepresentationLearning(opt)
 
-        # self.aie = AspectImportanceEstimation(opt)
+        self.aie = AspectImportanceEstimation(opt)
         
-        # self.rp = RatingPrediction(opt)
+        self.rp = RatingPrediction(opt)
 
         self.reset_para()
 
@@ -46,14 +46,14 @@ class ANR(nn.Module):
         #     Aspect Importance Estimation
         #     Eq 5 - 7
         # '''
-        # user_coo_attn, item_coo_attn = self.aie(user_rep, item_rep)
+        user_coo_attn, item_coo_attn = self.aie(user_rep, item_rep)
         
         
         # '''
         #     Rating Importance Prediction
         #     Eq 8
         # '''
-        # ratings = self.rp(user_rep, item_rep, user_coo_attn, item_coo_attn, uids, iids)
+        ratings = self.rp(user_rep, item_rep, user_coo_attn, item_coo_attn, uids, iids)
 
 
         return user_rep, item_rep

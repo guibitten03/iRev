@@ -45,8 +45,6 @@ class MAN(nn.Module):
         item_tcn = F.pad(item_reviews, (0, 0, pad, pad), 'constant', 0)
 
         # TemporalConvolutionNetwork
-        # user_tcn = self.user_conv(user_tcn.unsqueeze(1))
-        # item_tcn = self.item_conv(item_tcn.unsqueeze(1))
         user_tcn = self.user_conv(user_reviews.unsqueeze(1))
         item_tcn = self.item_conv(item_reviews.unsqueeze(1))
 
@@ -66,8 +64,8 @@ class MAN(nn.Module):
         i_emb = self.iid_embedding(iids)
         pred_hidden_fea = torch.cat([ui_features, u_emb, i_emb], dim=1)
 
-        # ui_fea = torch.cat([user_doc, item_doc], dim=1) # (128, 1000)
-        # ui_fea = self.auxiliar(ui_fea)
+        ui_fea = torch.cat([user_doc, item_doc], dim=1) # (128, 1000)
+        ui_fea = self.auxiliar(ui_fea)
 
         return pred_hidden_fea, None
 
@@ -108,18 +106,18 @@ class TemporalConvolutionNetwork(nn.Module):
         # kernels = [2,3,4]
 
         self.conv1 = nn.Conv2d(1, opt.filters_num, (opt.kernel_size, opt.word_dim))
-        # self.conv2 = nn.Conv2d(opt.filters_num, opt.filters_num, (opt.kernel_size, opt.word_dim))
-        # if uori == 'user':
-        #     self.conv3 = nn.Conv2d(opt.filters_num, opt.filters_num, (opt.kernel_size, opt.word_dim))
-        # else:
-        #     self.conv3 = nn.Conv2d(opt.filters_num, 1, (opt.kernel_size, opt.word_dim))
+        self.conv2 = nn.Conv2d(opt.filters_num, opt.filters_num, (opt.kernel_size, opt.word_dim))
+        if uori == 'user':
+            self.conv3 = nn.Conv2d(opt.filters_num, opt.filters_num, (opt.kernel_size, opt.word_dim))
+        else:
+            self.conv3 = nn.Conv2d(opt.filters_num, 1, (opt.kernel_size, opt.word_dim))
 
 
     def forward(self, x):
 
         fea = self.conv1(x)
-        # fea = self.conv2(fea)
-        # fea = self.conv3(fea)
+        fea = self.conv2(fea)
+        fea = self.conv3(fea)
 
         return fea
 

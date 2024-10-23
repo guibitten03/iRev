@@ -7,13 +7,11 @@ import torch.nn.functional as F
 
 
 class NARRE_FineTunning(nn.Module):
-    '''
-    NARRE: WWW 2018
-    '''
+    
     def __init__(self, opt):
         super(NARRE_FineTunning, self).__init__()
         self.opt = opt
-        self.num_fea = 2  # ID + Review
+        self.num_fea = 2 
 
         self.user_net = Net(opt, 'user')
         self.item_net = Net(opt, 'item')
@@ -51,22 +49,15 @@ class Net(nn.Module):
         self.reset_para()
 
     def forward(self, reviews, ids, ids_list):
-        # --------------- word embedding ----------------------------------
-        # reviews = self.word_embs(reviews)  # size * 300
         bs, r_num, emb_sz = reviews.size()
-        # reviews = reviews.view(-1, r_len, wd)
 
         id_emb = self.id_embedding(ids)
 
         u_i_id_emb = self.u_i_id_embedding(ids_list)
 
-        # --------cnn for review--------------------
         fea = F.relu(self.cnn(reviews.unsqueeze(1))).squeeze(3)  # .permute(0, 2, 1)
-        # fea = F.max_pool1d(fea, fea.size(2)).squeeze(2)
-        # fea = fea.view(-1, fea.size(), fea.size(1))
         fea = fea.transpose(2, 1)
 
-        # ------------------linear attention-------------------------------
         rs_mix = F.relu(self.review_linear(fea) + self.id_linear(F.relu(u_i_id_emb)))
         att_score = self.attention_linear(rs_mix)
         att_weight = F.softmax(att_score, 1)

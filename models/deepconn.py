@@ -7,17 +7,15 @@ import torch.nn.functional as F
 
 
 class DeepCoNN(nn.Module):
-    '''
-    deep conn 2017
-    '''
+    
     def __init__(self, opt, uori='user'):
         super(DeepCoNN, self).__init__()
         self.opt = opt
-        self.num_fea = 1 # DOC
+        self.num_fea = 1 
         
 
-        self.user_word_embs = nn.Embedding(opt.vocab_size, opt.word_dim)  # vocab_size * 300
-        self.item_word_embs = nn.Embedding(opt.vocab_size, opt.word_dim)  # vocab_size * 300
+        self.user_word_embs = nn.Embedding(opt.vocab_size, opt.word_dim)  
+        self.item_word_embs = nn.Embedding(opt.vocab_size, opt.word_dim) 
 
         self.user_cnn = nn.Conv2d(1, opt.filters_num, (opt.kernel_size, opt.word_dim))
         self.item_cnn = nn.Conv2d(1, opt.filters_num, (opt.kernel_size, opt.word_dim))
@@ -34,8 +32,8 @@ class DeepCoNN(nn.Module):
         user_doc = self.user_word_embs(user_doc)
         item_doc = self.item_word_embs(item_doc)
 
-        u_fea = F.relu(self.user_cnn(user_doc.unsqueeze(1))).squeeze(3)  # .permute(0, 2, 1)
-        i_fea = F.relu(self.item_cnn(item_doc.unsqueeze(1))).squeeze(3)  # .permute(0, 2, 1)
+        u_fea = F.relu(self.user_cnn(user_doc.unsqueeze(1))).squeeze(3)  
+        i_fea = F.relu(self.item_cnn(item_doc.unsqueeze(1))).squeeze(3)  
         u_fea = F.max_pool1d(u_fea, u_fea.size(2)).squeeze(2)
         i_fea = F.max_pool1d(i_fea, i_fea.size(2)).squeeze(2)
         u_fea = self.dropout(self.user_fc_linear(u_fea))

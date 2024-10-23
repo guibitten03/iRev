@@ -7,13 +7,11 @@ import torch.nn.functional as F
 
 
 class DeepCoNN_FineTunning(nn.Module):
-    '''
-    deep conn 2017
-    '''
+    
     def __init__(self, opt, uori='user'):
         super(DeepCoNN_FineTunning, self).__init__()
         self.opt = opt
-        self.num_fea = 1 # DOC
+        self.num_fea = 1 
         
 
         self.user_cnn = nn.Conv2d(1, opt.filters_num, (1, 768))

@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-
-# KEEP GLOBAL CONFIGURATION OF FRAMEWORK
-# KEEP DATASET CONFIGURATIONS
 import numpy as np
 
 class DefaultConfig:

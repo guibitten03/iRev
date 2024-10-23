@@ -68,7 +68,7 @@ class CARP(nn.Module):
 
 
         # return user_vector, item_vector
-        return u_fea, i_fea
+        return u_fea, i_fea, routing
 
     def reset_para(self):
         if self.opt.use_word_embedding:

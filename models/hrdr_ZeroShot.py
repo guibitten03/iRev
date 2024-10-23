@@ -10,7 +10,7 @@ class HRDR_ZeroShot(nn.Module):
     def __init__(self, opt):
         super(HRDR_ZeroShot, self).__init__()
         self.opt = opt
-        self.num_fea = 2  # ID + Review
+        self.num_fea = 2  
 
         self.user_net = Net(opt, uori='user')
         self.item_net = Net(opt, uori='item')
@@ -72,27 +72,27 @@ class Net(nn.Module):
 
         # --------------- word embedding ----------------------------------
         
-        # reviews = self.word_embs(reviews) 
-        # reviews = self.dropout(reviews)
-        # bs, r_num, r_len, wd = reviews.size()
-        # reviews = reviews.view(-1, r_len, wd)
+        reviews = self.word_embs(reviews) 
+        reviews = self.dropout(reviews)
+        bs, r_num, r_len, wd = reviews.size()
+        reviews = reviews.view(-1, r_len, wd)
         
         '''
             Get respective id embedding: No grad.
         '''
         rating_matrix = torch.from_numpy(np.load(self.opt.ratingMatrix_path))
 
-        # user_features = torch.Tensor(np.load(f"checkpoints/user_features_pmf_{self.opt.dataset}_{self.opt.emb_opt}.npy"))
-        # item_features = torch.Tensor(np.load(f"checkpoints/item_features_pmf_{self.opt.dataset}_{self.opt.emb_opt}.npy"))
+        user_features = torch.Tensor(np.load(f"checkpoints/user_features_pmf_{self.opt.dataset}_{self.opt.emb_opt}.npy"))
+        item_features = torch.Tensor(np.load(f"checkpoints/item_features_pmf_{self.opt.dataset}_{self.opt.emb_opt}.npy"))
 
-        # if uori == 'user':
-            # matrix_vector = rating_matrix[ids.cpu()]
-            # matrix_vector = user_features[ids.cpu()]
-            # matrix_vector = matrix_vector.cuda()
-        # else:
-            # matrix_vector = (rating_matrix[:, ids.cpu()]).t()
-            # matrix_vector = item_features[ids.cpu()]
-            # matrix_vector = matrix_vector.cuda()
+        if uori == 'user':
+            matrix_vector = rating_matrix[ids.cpu()]
+            matrix_vector = user_features[ids.cpu()]
+            matrix_vector = matrix_vector.cuda()
+        else:
+            matrix_vector = (rating_matrix[:, ids.cpu()]).t()
+            matrix_vector = item_features[ids.cpu()]
+            matrix_vector = matrix_vector.cuda()
 
         if uori == 'user':
             matrix_vector = self.rating_matrix(ids)

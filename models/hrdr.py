@@ -116,11 +116,11 @@ class Net(nn.Module):
         else:
             nn.init.xavier_normal_(self.word_embs.weight)
 
-        # ----------------Matrix init method--------------#
-        # ratingMatrix = torch.from_numpy(np.load(self.opt.ratingMatrix_path))
-        # self.rating_matrix.weight.data.copy_(ratingMatrix)
-        # self.rating_matrix.weight.data.copy_(ratingMatrix.cuda())
-        # self.iid_embedding.weight.data.copy_(ratingMatrix.T.cuda())
+        ----------------Matrix init method--------------#
+        ratingMatrix = torch.from_numpy(np.load(self.opt.ratingMatrix_path))
+        self.rating_matrix.weight.data.copy_(ratingMatrix)
+        self.rating_matrix.weight.data.copy_(ratingMatrix.cuda())
+        self.iid_embedding.weight.data.copy_(ratingMatrix.T.cuda())
 
 
     def init_model_weight(self):

@@ -7,9 +7,7 @@ import torch.nn.functional as F
 
 
 class NARRE(nn.Module):
-    '''
-    NARRE: WWW 2018
-    '''
+    
     def __init__(self, opt):
         super(NARRE, self).__init__()
         self.opt = opt
@@ -37,8 +35,8 @@ class Net(nn.Module):
             id_num = self.opt.item_num
             ui_id_num = self.opt.user_num
 
-        self.id_embedding = nn.Embedding(id_num, self.opt.id_emb_size)  # user/item num * 32
-        self.word_embs = nn.Embedding(self.opt.vocab_size, self.opt.word_dim)  # vocab_size * 300
+        self.id_embedding = nn.Embedding(id_num, self.opt.id_emb_size)  
+        self.word_embs = nn.Embedding(self.opt.vocab_size, self.opt.word_dim)  
         self.u_i_id_embedding = nn.Embedding(ui_id_num, self.opt.id_emb_size)
 
         self.review_linear = nn.Linear(self.opt.filters_num, self.opt.id_emb_size)
@@ -52,8 +50,7 @@ class Net(nn.Module):
         self.reset_para()
 
     def forward(self, reviews, ids, ids_list):
-        # --------------- word embedding ----------------------------------
-        reviews = self.word_embs(reviews)  # size * 300
+        reviews = self.word_embs(reviews) 
         bs, r_num, r_len, wd = reviews.size()
         reviews = reviews.view(-1, r_len, wd)
 
@@ -61,12 +58,10 @@ class Net(nn.Module):
 
         u_i_id_emb = self.u_i_id_embedding(ids_list)
 
-        # --------cnn for review--------------------
-        fea = F.relu(self.cnn(reviews.unsqueeze(1))).squeeze(3)  # .permute(0, 2, 1)
+        fea = F.relu(self.cnn(reviews.unsqueeze(1))).squeeze(3)  
         fea = F.max_pool1d(fea, fea.size(2)).squeeze(2)
         fea = fea.view(-1, r_num, fea.size(1))
 
-        # ------------------linear attention-------------------------------
         rs_mix = F.relu(self.review_linear(fea) + self.id_linear(F.relu(u_i_id_emb)))
         att_score = self.attention_linear(rs_mix)
         att_weight = F.softmax(att_score, 1)

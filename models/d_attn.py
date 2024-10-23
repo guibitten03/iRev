@@ -7,10 +7,6 @@ import torch.nn.functional as F
 
 
 class D_ATTN(nn.Module):
-    '''
-    Interpretable Convolutional Neural Networks with Dual Local and Global Attention for Review Rating Prediction
-    Rescys 2017
-    '''
     def __init__(self, opt):
         super(D_ATTN, self).__init__()
         self.opt = opt
@@ -31,7 +27,7 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.opt = opt
 
-        self.word_embs = nn.Embedding(self.opt.vocab_size, self.opt.word_dim)  # vocab_size * 300
+        self.word_embs = nn.Embedding(self.opt.vocab_size, self.opt.word_dim) 
         self.local_att = LocalAttention(opt.doc_len, win_size=5, emb_size=opt.word_dim, filters_num=opt.filters_num)
         self.global_att = GlobalAttention(opt.doc_len, emb_size=opt.word_dim, filters_num=opt.filters_num)
 
@@ -46,7 +42,7 @@ class Net(nn.Module):
         self.reset_para()
 
     def forward(self, docs):
-        docs = self.word_embs(docs)  # size * 300
+        docs = self.word_embs(docs)  
         local_fea = self.local_att(docs)
         global_fea = self.global_att(docs)
         r_fea = torch.cat([local_fea]+global_fea, 1)
