@@ -198,9 +198,6 @@ class AMAZON_FASHION_data_Config(DefaultConfig):
     user_num = 404 + 2
     item_num = 31 + 2
 
-    
-
-
 class Toys_and_Games_data_Config(DefaultConfig):
     
     # DATASET FEATURES CONFIG
@@ -242,7 +239,6 @@ class Digital_Music_data_Config(DefaultConfig):
     user_num = 16561 + 2
     item_num = 11797 + 2
 
-
 class Video_Games_data_Config(DefaultConfig):
     
     # DATASET FEATURES CONFIG
@@ -261,7 +257,6 @@ class Video_Games_data_Config(DefaultConfig):
 
     user_num = 55217 + 2
     item_num = 17408 + 2
-
 
 class Industrial_and_Scientific_data_Config(DefaultConfig):
     
@@ -300,7 +295,6 @@ class Musical_Instruments_data_Config(DefaultConfig):
 
     user_num = 27528 + 2
     item_num = 10620 + 2
-
 
 class Prime_Pantry_data_Config(DefaultConfig):
     
@@ -362,7 +356,6 @@ class Tamp_data_Config(DefaultConfig):
 
 class Tucso_data_Config(DefaultConfig):
     
-    # DATASET FEATURES CONFIG
     setting_path = '.data/Tucso_data_'
         
     vocab_size = 50002
@@ -382,7 +375,6 @@ class Tucso_data_Config(DefaultConfig):
 
 class Philladelphi_data_Config(DefaultConfig):
     
-    # DATASET FEATURES CONFIG
     setting_path = '.data/Philladelphi_data_'
         
     vocab_size = 50002

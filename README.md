@@ -14,6 +14,8 @@ The **iRev** framework is designed for creating recommendation systems that leve
 
 ## Taxonomy of RARS:
 
+![Taxonomy](assets/taxonomy.png)
+
 iRev categorizes Review-Aware Recommender Systems (RARS) into three main approaches:
 
 ### Data Modeling:
