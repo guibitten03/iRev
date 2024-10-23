@@ -17,27 +17,27 @@ The **iRev** framework is designed for creating recommendation systems that leve
 iRev categorizes Review-Aware Recommender Systems (RARS) into three main approaches:
 
 ### Data Modeling:
-**Document Modeling**: Concatenates all user comments, including those on items, into a single document representation.
-**Sentence Modeling**: Focuses on identifying key words and sentences to form a structured representation of users and items.
-**Rating Aggregation**: Associates numerical ratings with respective comments, similar to traditional recommendation systems using collaborative filtering.
+1. **Document Modeling**: Concatenates all user comments, including those on items, into a single document representation.
+2. **Sentence Modeling**: Focuses on identifying key words and sentences to form a structured representation of users and items.
+3. **Rating Aggregation**: Associates numerical ratings with respective comments, similar to traditional recommendation systems using collaborative filtering.
 
 ### Information Extraction:
-**Sentiment Extraction**: Articles that apply sentiment analysis techniques to extract information from user comments.
-**Aspect Extraction**: Articles that propose methods for identifying latent or implicit aspects within textual comments.
+1. **Sentiment Extraction**: Articles that apply sentiment analysis techniques to extract information from user comments.
+2. **Aspect Extraction**: Articles that propose methods for identifying latent or implicit aspects within textual comments.
 
 ### Model Objective:
-**Prediction Systems**: Focus on predicting user preferences or ratings.
-**Explanation Systems**: Aim to explain recommendations based on user comments.
-**Hybrid Systems**: Combine both prediction and explanation approaches.
+1. **Prediction Systems**: Focus on predicting user preferences or ratings.
+2. **Explanation Systems**: Aim to explain recommendations based on user comments.
+3. **Hybrid Systems**: Combine both prediction and explanation approaches.
 
 ### Learning Based:
-**Non-Neural Architectures**: Utilize traditional learning techniques for recommendation, including methods like matrix factorization, clustering algorithms, and graph-based approaches.
-**Neural Architectures**: Employ artificial neural network-based methods, such as convolutional techniques, attention mechanisms, recurrent networks, and graph neural networks.
+1. **Non-Neural Architectures**: Utilize traditional learning techniques for recommendation, including methods like matrix factorization, clustering algorithms, and graph-based approaches.
+2. **Neural Architectures**: Employ artificial neural network-based methods, such as convolutional techniques, attention mechanisms, recurrent networks, and graph neural networks.
 
 ### Recommender Approach:
-**Content-Based**: Recommendations based on the attributes of items.
-**Collaborative Filters**: Recommendations based on user interactions and similarities.
-**Hybrid**: Combines both content-based and collaborative filtering strategies.
+1. **Content-Based**: Recommendations based on the attributes of items.
+2. **Collaborative Filters**: Recommendations based on user interactions and similarities.
+3. **Hybrid**: Combines both content-based and collaborative filtering strategies.
 
 ------
 
