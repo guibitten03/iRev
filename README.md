@@ -33,8 +33,14 @@ iRev categorizes Review-Aware Recommender Systems (RARS) into three main approac
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+   pip install -r requirements.txt
 
 3. Preprocessing:
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+   pip install -r requirements.txt
 
 4. Training:
 
